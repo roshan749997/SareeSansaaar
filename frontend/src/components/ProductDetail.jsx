@@ -32,21 +32,11 @@ const ProductDetail = () => {
     loadSaree();
   }, [id]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!saree) return;
     setIsAdding(true);
     try {
-      const cartItem = {
-        ...saree,
-        id: saree.title,
-        price: Math.round(saree.mrp - (saree.mrp * (saree.discountPercent || 0) / 100)),
-        originalPrice: saree.mrp,
-        discount: saree.discountPercent,
-        image: saree.images?.image1
-      };
-      for (let i = 0; i < quantity; i++) {
-        addToCart(cartItem);
-      }
+      await addToCart(id, quantity);
       alert(`${saree.title} ${quantity > 1 ? `(${quantity} items) ` : ''}added to cart!`);
     } catch (error) {
       console.error('Error adding to cart:', error);

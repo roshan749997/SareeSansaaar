@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes.js';
 import headerRoutes from './routes/header.routes.js';
 import productRoutes from './routes/product.routes.js';
+import cartRoutes from './routes/cart.routes.js';
+
 import connectDB from './config/DataBaseConnection.js';
 
 configDotenv();
@@ -35,6 +37,7 @@ server.get('/api/health', (req, res) => res.json({ ok: true }));
 server.use('/api/auth', authRoutes);
 server.use('/api/header', headerRoutes);
 server.use('/api/products', productRoutes);
+server.use('/api/cart', cartRoutes);
 
 const PORT = process.env.PORT || 5000;
 

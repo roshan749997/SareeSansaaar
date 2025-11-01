@@ -42,14 +42,8 @@ const Router = () => {
   return (
     <CartProvider>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <RequireAuth>
-              <Layout />
-            </RequireAuth>
-          }
-        >
+        <Route path="/" element={<Layout />}>
+          {/* Public routes */}
           <Route index element={<Home />} />
           <Route path="shop" element={<Shop />} />
           <Route path="collections" element={<Collections />} />
@@ -65,8 +59,11 @@ const Router = () => {
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="cart" element={<Cart />} />
+
+          {/* Private route(s) */}
+          <Route path="cart" element={<RequireAuth><Cart /></RequireAuth>} />
         </Route>
+
         <Route path="signin" element={<RedirectIfAuth><SignIn /></RedirectIfAuth>} />
         <Route path="signup" element={<RedirectIfAuth><SignUp /></RedirectIfAuth>} />
         <Route path="forgot-password" element={<ForgotPassword />} />

@@ -22,19 +22,32 @@ const Navbar = () => {
   // Check authentication status - Using in-memory state instead of localStorage
   useEffect(() => {
     // You can integrate this with your authentication context/provider
-    // For now, it uses component state
+    // For now, derive auth from localStorage token to keep Navbar in sync with Router guards
     const checkAuth = () => {
-      // Replace this with your actual auth check logic
-      // Example: const user = authContext.user;
-      // setIsAuthenticated(Boolean(user));
+      try {
+        const token = localStorage.getItem('auth_token');
+        setIsAuthenticated(Boolean(token));
+      } catch {
+        setIsAuthenticated(false);
+      }
     };
-    
+
     checkAuth();
+    const onStorage = (e) => {
+      if (!e || e.key === 'auth_token') {
+        checkAuth();
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   const handleLogout = () => {
     // Handle logout logic here
     // Example: authContext.logout();
+    try {
+      localStorage.removeItem('auth_token');
+    } catch {}
     setIsAuthenticated(false);
     navigate('/signin');
   };
