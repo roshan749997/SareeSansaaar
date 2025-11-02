@@ -11,14 +11,14 @@ const Header = () => {
       name: 'Silk', 
       path: '/category/silk',
       subcategories: [
-        { name: 'Soft Silk Sarees', path: '/category/silk/soft-silk' },
-        { name: 'Kanjivaram Sarees', path: '/category/silk/kanjivaram' },
-        { name: 'Banarasi Sarees', path: '/category/silk/banarasi' },
-        { name: 'Maheshwari Silk', path: '/category/silk/maheshwari' },
-        { name: 'Raw Silk Sarees', path: '/category/silk/raw-silk' },
-        { name: 'Mysore Silk Sarees', path: '/category/silk/mysore-silk' },
-        { name: 'Sambalpuri Sarees', path: '/category/silk/sambalpuri-sarees' },
-        { name: 'Kalamkari Print Saree', path: '/category/silk/kalamkari-print-saree' }
+        { name: 'Soft Silk Sarees', path: '/category/silk/soft-silk-sarees' },
+        { name: 'Kanjivaram Silk Sarees', path: '/category/silk/kanjivaram-silk-sarees' },
+        { name: 'Banarasi Silk Sarees', path: '/category/silk/banarasi-silk-sarees' },
+        { name: 'Maheshwari Silk Sarees', path: '/category/silk/maheshwari-silk-sarees' },
+        { name: 'Raw Silk Sarees', path: '/category/silk/raw-silk-sarees' },
+        { name: 'Mysore Silk Sarees', path: '/category/silk/mysore-silk-sarees' },
+        { name: 'Sambalpuri Silk Sarees', path: '/category/silk/sambalpuri-silk-sarees' },
+        { name: 'Kalamkari Print Silk Sarees', path: '/category/silk/kalamkari-print-silk-sarees' }
 
       ]
     },
@@ -59,9 +59,9 @@ const Header = () => {
       name: 'Banarasi', 
       path: '/category/banarasi',
       subcategories: [
-        { name: 'Banarasi Sarees', path: '/category/banarasi/banarasi-regional-sarees' },
-        { name: 'Banarasi Dupatta', path: '/category/banarasi/banarasi-regional-dupatta' },
-        { name: 'Banarasi Dress Material', path: '/category/banarasi/banarasi-regional-dress-material' }
+        { name: 'Banarasi Sarees', path: '/category/banarasi/banarasi-sarees' },
+        { name: 'Banarasi Dupatta', path: '/category/banarasi/banarasi-dupatta' },
+        { name: 'Banarasi Dress Material', path: '/category/banarasi/banarasi-dress-material' }
       ]
     },
     { 
