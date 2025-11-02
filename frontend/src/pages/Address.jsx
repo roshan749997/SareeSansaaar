@@ -1,5 +1,6 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { getMyAddress, saveMyAddress } from '../services/api';
 
 const indianStates = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -17,6 +18,10 @@ export default function AddressForm() {
   const [filteredStates, setFilteredStates] = useState([...indianStates]);
   const [searchTerm, setSearchTerm] = useState('');
   const stateDropdownRef = useRef(null);
+  const [loadingAddress, setLoadingAddress] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [hasSavedAddress, setHasSavedAddress] = useState(false);
+  const [editMode, setEditMode] = useState(true);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -30,7 +35,6 @@ export default function AddressForm() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter states based on search term
   useEffect(() => {
     if (searchTerm) {
       setFilteredStates(
@@ -98,7 +102,38 @@ export default function AddressForm() {
   };
 
   const handleUseCurrentLocation = () => {
-    alert('Location feature would access your GPS coordinates');
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+        const data = await resp.json();
+        const addr = data.address || {};
+        const pincode = addr.postcode || '';
+        const city = addr.city || addr.town || addr.village || addr.district || '';
+        const state = addr.state || '';
+        const locality = addr.suburb || addr.neighbourhood || addr.quarter || '';
+        const road = addr.road || addr.residential || '';
+        const house = addr.house_number ? `${addr.house_number}, ` : '';
+        const composed = `${house}${road}`.trim();
+        setFormData((prev) => ({
+          ...prev,
+          pincode,
+          city,
+          state,
+          locality: locality || prev.locality,
+          address: composed || prev.address,
+        }));
+      } catch (e) {
+        console.error('Reverse geocoding failed', e);
+        alert('Could not fetch address from location');
+      }
+    }, (err) => {
+      alert('Unable to get your location');
+    }, { enableHighAccuracy: true, timeout: 10000 });
   };
 
   const validateForm = () => {
@@ -129,30 +164,74 @@ export default function AddressForm() {
     return errors;
   };
 
-  const handleSaveAddress = (e) => {
+  const handleSaveAddress = async (e) => {
     e.preventDefault();
-    
     const errors = validateForm();
-    
     if (errors.length > 0) {
       alert('Please fix the following errors:\n\n' + errors.join('\n'));
       return;
     }
-    
-    // If we get here, all validations passed
-    alert('Address saved successfully!');
-    console.log('Save address:', formData);
-    setShowSuccess(true);
-    
-    // In a real app, you would save the address to your backend here
-    // Example: saveAddress(formData).then(() => setShowSuccess(true));
+    const payload = {
+      fullName: formData.name.trim(),
+      mobileNumber: formData.mobile.trim(),
+      pincode: formData.pincode.trim(),
+      locality: formData.locality.trim(),
+      address: formData.address.trim(),
+      city: formData.city.trim(),
+      state: formData.state.trim(),
+      landmark: formData.landmark.trim(),
+      alternatePhone: formData.alternatePhone.trim(),
+      addressType: formData.addressType === 'work' ? 'Work' : 'Home',
+    };
+    try {
+      setSaving(true);
+      const saved = await saveMyAddress(payload);
+      setHasSavedAddress(true);
+      setShowSuccess(true);
+      setEditMode(false);
+      alert('Address saved successfully!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save address. Please sign in and try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleCancel = () => {
     console.log('Cancel clicked');
   };
 
-  // Price details are now calculated from cart data
+  // Load existing address on mount
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoadingAddress(true);
+        const doc = await getMyAddress();
+        if (doc && doc._id) {
+          setHasSavedAddress(true);
+          setEditMode(false);
+          setFormData({
+            name: doc.fullName || '',
+            mobile: doc.mobileNumber || '',
+            pincode: doc.pincode || '',
+            locality: doc.locality || '',
+            address: doc.address || '',
+            city: doc.city || '',
+            state: doc.state || '',
+            landmark: doc.landmark || '',
+            alternatePhone: doc.alternatePhone || '',
+            addressType: (doc.addressType || 'Home').toLowerCase(),
+          });
+        }
+      } catch (e) {
+        // no-op if unauthenticated
+      } finally {
+        setLoadingAddress(false);
+      }
+    };
+    load();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -165,12 +244,23 @@ export default function AddressForm() {
             </div>
 
             <div className="p-6">
-              <div className="mb-4">
-                <label className="flex items-center gap-2 text-sm font-medium text-blue-600">
-                  <input type="radio" checked readOnly className="w-4 h-4" />
-                  EDIT ADDRESS
-                </label>
-              </div>
+              {loadingAddress && (
+                <div className="mb-4 text-sm text-gray-600">Loading your saved address…</div>
+              )}
+              {hasSavedAddress && !editMode && (
+                <div className="mb-6 border rounded p-4 bg-gray-50">
+                  <div className="font-medium text-gray-900">{formData.name}</div>
+                  <div className="text-sm text-gray-700">{formData.address}</div>
+                  <div className="text-sm text-gray-700">{formData.locality}, {formData.city} - {formData.pincode}</div>
+                  <div className="text-sm text-gray-700">{formData.state}</div>
+                  <div className="text-sm text-gray-700">Mobile: {formData.mobile}</div>
+                  {formData.landmark && <div className="text-sm text-gray-700">Landmark: {formData.landmark}</div>}
+                  {formData.alternatePhone && <div className="text-sm text-gray-700">Alt: {formData.alternatePhone}</div>}
+                  <div className="mt-4 flex gap-3">
+                    <button type="button" onClick={() => setEditMode(true)} className="px-4 py-2 border rounded text-blue-600 border-blue-600 hover:bg-blue-50 cursor-pointer">Edit Address</button>
+                  </div>
+                </div>
+              )}
 
               <button
                 type="button"
@@ -183,7 +273,7 @@ export default function AddressForm() {
                 Use my current location
               </button>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${hasSavedAddress && !editMode ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                 <div>
                   <label className="block text-xs text-gray-600 mb-1">Name</label>
                   <input
@@ -211,7 +301,7 @@ export default function AddressForm() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${hasSavedAddress && !editMode ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                 <div>
                   <label className="block text-xs text-gray-600 mb-1">Pincode</label>
                   <input
@@ -239,7 +329,7 @@ export default function AddressForm() {
                 </div>
               </div>
 
-              <div>
+              <div className={`${hasSavedAddress && !editMode ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                 <label className="block text-xs text-gray-600 mb-1">Address (Area and Street)</label>
                 <textarea
                   name="address"
@@ -252,7 +342,7 @@ export default function AddressForm() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${hasSavedAddress && !editMode ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                 <div>
                   <label className="block text-xs text-gray-600 mb-1">City/District/Town</label>
                   <input
@@ -312,7 +402,7 @@ export default function AddressForm() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${hasSavedAddress && !editMode ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                 <div>
                   <label className="block text-xs text-gray-600 mb-1">Landmark (Optional)</label>
                   <input
@@ -338,7 +428,7 @@ export default function AddressForm() {
                 </div>
               </div>
 
-              <div>
+              <div className={`${hasSavedAddress && !editMode ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                 <label className="block text-xs text-gray-600 mb-2">Address Type</label>
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2">
@@ -367,7 +457,8 @@ export default function AddressForm() {
               <div className="flex flex-col sm:flex-row gap-4 pt-2 w-full">
                 <button
                   type="submit"
-                  className="bg-[#800020] hover:bg-[#660019] text-white px-8 py-3 rounded font-medium transition-colors cursor-pointer w-full sm:w-auto text-center"
+                  disabled={saving}
+                  className={`bg-[#800020] hover:bg-[#660019] text-white px-8 py-3 rounded font-medium transition-colors cursor-pointer w-full sm:w-auto text-center ${saving ? 'opacity-70' : ''}`}
                 >
                   SAVE AND DELIVER HERE
                 </button>
@@ -391,7 +482,7 @@ export default function AddressForm() {
         <div className="lg:col-span-1">
           <div className="bg-white shadow-sm rounded p-4 sticky top-4">
             <h3 className="text-gray-500 text-sm font-medium mb-4">PRICE DETAILS</h3>
-            
+
             <div className="space-y-3 mb-4 pb-4 border-b">
               <div className="flex justify-between text-sm">
                 <span>Price ({priceDetails.items} items)</span>
@@ -412,13 +503,17 @@ export default function AddressForm() {
               <span>₹{priceDetails.total.toLocaleString()}</span>
             </div>
 
-
             <button 
               onClick={() => {
                 // TODO: Implement payment processing
+                if (!hasSavedAddress) {
+                  alert('Please save your delivery address first.');
+                  return;
+                }
                 alert('Proceeding to payment...');
               }}
-              className="w-full mt-4 bg-[#800020] text-white py-3 px-4 rounded-md hover:bg-[#660019] transition-colors font-medium cursor-pointer"
+              disabled={!hasSavedAddress}
+              className={`w-full mt-4 py-3 px-4 rounded-md transition-colors font-medium cursor-pointer ${hasSavedAddress ? 'bg-[#800020] text-white hover:bg-[#660019]' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
             >
               PROCEED TO PAYMENT
             </button>

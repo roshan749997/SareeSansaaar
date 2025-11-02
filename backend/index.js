@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.routes.js';
 import headerRoutes from './routes/header.routes.js';
 import productRoutes from './routes/product.routes.js';
 import cartRoutes from './routes/cart.routes.js';
+import addressRoutes from './routes/address.routes.js';
 
 import connectDB from './config/DataBaseConnection.js';
 
@@ -38,6 +39,7 @@ server.use('/api/auth', authRoutes);
 server.use('/api/header', headerRoutes);
 server.use('/api/products', productRoutes);
 server.use('/api/cart', cartRoutes);
+server.use('/api/address', addressRoutes);
 
 const PORT = process.env.PORT || 5000;
 
