@@ -60,7 +60,7 @@ const ProductList = ({ defaultCategory } = {}) => {
   }
 
   return (
-    <div className="min-h-screen bg-white pt-6 pb-20">
+    <div className="min-h-screen bg-gray-50 pt-6 pb-20 px-4 sm:px-6 lg:px-8">
       {loading && (
         <div className="fixed left-0 right-0 top-[64px] md:top-[80px] z-50">
           <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-pink-500 to-amber-500 animate-pulse"></div>
@@ -68,53 +68,68 @@ const ProductList = ({ defaultCategory } = {}) => {
       )}
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
-        <div className="px-4 mb-8">
-          <h1 className="text-3xl md:text-4xl font-semibold text-neutral-900 tracking-tight leading-tight text-center">
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
             {subCategoryName
               ? normalize(subCategoryName)
               : (categoryName || defaultCategory
                   ? normalize(categoryName || defaultCategory)
                   : 'All Sarees')}
           </h1>
+          <div className="w-24 h-1 bg-gradient-to-r from-[#7A2A2A] via-[#A56E2C] to-[#C89D4B] mx-auto mt-2 rounded-full"></div>
         </div>
+        
         {products.length === 0 ? (
-          <p className="text-center text-gray-500">No products found in this category.</p>
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+            <p className="text-gray-500 text-lg">No products found in this category.</p>
+          </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
             {products.map((p) => (
               <div
                 key={p._id || p.title}
-                className="bg-white border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                className="group bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-pink-100"
                 onClick={() => handleCardClick(p)}
               >
-                <div className="relative w-full aspect-3/4 bg-gray-50">
+                <div className="relative w-full aspect-[3/4] bg-gray-50">
                   <img
                     src={p.images?.image1 || 'https://via.placeholder.com/300x400?text=Image+Not+Available'}
                     alt={p.title}
-                    className="absolute top-0 left-0 w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = 'https://via.placeholder.com/300x400?text=Image+Not+Available';
                     }}
                   />
+                  {(p.discountPercent > 0 || p.discount) && (
+                    <span className="absolute top-3 right-3 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                      {p.discountPercent || p.discount}% OFF
+                    </span>
+                  )}
                 </div>
 
-                <div className="p-3">
-                  <p className="text-xs text-gray-400 mb-0.5">Sponsored</p>
-                  <h3 className="text-sm font-semibold text-gray-800 line-clamp-1">
-                    {p.product_info?.manufacturer || 'VARNICRAFTS'}
-                  </h3>
-                  <p className="text-sm text-gray-700 line-clamp-1">{p.title || 'Untitled Product'}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{p.color || ''}</p>
+                <div className="relative p-4">
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#7A2A2A] via-[#A56E2C] to-[#C89D4B] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-10"></div>
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className="text-sm font-medium text-gray-600 line-clamp-1">
+                      {p.product_info?.manufacturer || 'VARNICRAFTS'}
+                    </h3>
+                    <span className="text-xs text-gray-400">Sponsored</span>
+                  </div>
+                  <p className="text-sm font-bold text-gray-900 line-clamp-2 mb-2 min-h-[2.5rem]">{p.title || 'Untitled Product'}</p>
+                  {p.color && <p className="text-xs text-gray-500 mb-2">Color: {p.color}</p>}
 
-                  <div className="flex items-center gap-1 mt-1">
-                    <FaRupeeSign className="h-3 w-3 text-gray-800" />
-                    <span className="text-base font-bold text-gray-900">
-                      {p.price?.toLocaleString() || (p.mrp - p.mrp * ((p.discountPercent || 0) / 100)).toLocaleString()}
-                    </span>
-                    {p.mrp && <span className="text-gray-400 text-xs line-through ml-1">₹{p.mrp.toLocaleString()}</span>}
-                    {(p.discountPercent > 0 || p.discount) && (
-                      <span className="text-green-600 text-xs font-medium ml-1">{(p.discountPercent || p.discount)}% off</span>
+                  <div className="flex items-baseline gap-1.5 mt-2">
+                    <div className="flex items-center">
+                      <FaRupeeSign className="h-3.5 w-3.5 text-gray-900" />
+                      <span className="text-lg font-bold text-gray-900 ml-0.5">
+                        {p.price?.toLocaleString() || Math.round(p.mrp - p.mrp * ((p.discountPercent || 0) / 100)).toLocaleString()}
+                      </span>
+                    </div>
+                    {p.mrp && (
+                      <span className="text-xs text-gray-400 line-through">
+                        ₹{p.mrp.toLocaleString()}
+                      </span>
                     )}
                   </div>
                 </div>
