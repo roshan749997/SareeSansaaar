@@ -9,6 +9,7 @@ import cartRoutes from './routes/cart.routes.js';
 import addressRoutes from './routes/address.routes.js';
 
 import connectDB from './config/DataBaseConnection.js';
+import productRouter from './routes/product.routes.js';
 
 configDotenv();
 
@@ -37,7 +38,7 @@ server.use(cookieParser());
 server.get('/api/health', (req, res) => res.json({ ok: true }));
 server.use('/api/auth', authRoutes);
 server.use('/api/header', headerRoutes);
-server.use('/api/products', productRoutes);
+server.use('/api',productRouter);
 server.use('/api/cart', cartRoutes);
 server.use('/api/address', addressRoutes);
 
