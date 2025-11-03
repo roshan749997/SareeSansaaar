@@ -117,10 +117,10 @@ const Navbar = () => {
 
   // Navigation links
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Collections', path: '/collections' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'HOME', path: '/' },
+    { name: 'COLLECTIONS', path: '/collections' },
+    { name: 'ABOUT', path: '/about' },
+    { name: 'CONTACT', path: '/contact' },
   ];
 
   return (
