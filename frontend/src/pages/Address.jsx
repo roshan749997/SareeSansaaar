@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { getMyAddress, saveMyAddress } from '../services/api';
+import { getMyAddress, saveMyAddress, deleteAddressById } from '../services/api';
 
 const indianStates = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -22,6 +22,7 @@ export default function AddressForm() {
   const [saving, setSaving] = useState(false);
   const [hasSavedAddress, setHasSavedAddress] = useState(false);
   const [editMode, setEditMode] = useState(true);
+  const [addressId, setAddressId] = useState(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -209,6 +210,7 @@ export default function AddressForm() {
         setLoadingAddress(true);
         const doc = await getMyAddress();
         if (doc && doc._id) {
+          setAddressId(doc._id);
           setHasSavedAddress(true);
           setEditMode(false);
           setFormData({
@@ -258,6 +260,38 @@ export default function AddressForm() {
                   {formData.alternatePhone && <div className="text-sm text-gray-700">Alt: {formData.alternatePhone}</div>}
                   <div className="mt-4 flex gap-3">
                     <button type="button" onClick={() => setEditMode(true)} className="px-4 py-2 border rounded text-blue-600 border-blue-600 hover:bg-blue-50 cursor-pointer">Edit Address</button>
+                    <button 
+                      type="button" 
+                      onClick={async () => {
+                        if (window.confirm('Are you sure you want to delete this address?')) {
+                          try {
+                            await deleteAddressById(addressId);
+                            setHasSavedAddress(false);
+                            setEditMode(true);
+                            setFormData({
+                              name: '',
+                              mobile: '',
+                              pincode: '',
+                              locality: '',
+                              address: '',
+                              city: '',
+                              state: '',
+                              landmark: '',
+                              alternatePhone: '',
+                              addressType: 'home'
+                            });
+                            setAddressId(null);
+                            alert('Address deleted successfully');
+                          } catch (error) {
+                            console.error('Error deleting address:', error);
+                            alert(error.message || 'Failed to delete address. Please try again.');
+                          }
+                        }
+                      }}
+                      className="px-4 py-2 border rounded text-red-600 border-red-600 hover:bg-red-50 cursor-pointer"
+                    >
+                      Delete Address
+                    </button>
                   </div>
                 </div>
               )}
