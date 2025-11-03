@@ -36,8 +36,46 @@ const ProductList = ({ defaultCategory } = {}) => {
     material: true
   });
   
-  // Available options
-  const materials = ['Silk', 'Cotton', 'Georgette', 'Chiffon', 'Linen', 'Satin', 'Velvet', 'Organza'];
+  // Available fabric options
+  const allPossibleFabrics = ['Silk', 'Cotton', 'Georgette', 'Chiffon', 'Linen', 'Satin', 'Velvet', 'Organza', 'Banarasi', 'Kanjivaram', 'Katan', 'Tussar', 'Maheshwari', 'Chanderi', 'Kota', 'Gota Patti', 'Zari', 'Zardosi', 'Resham', 'Kalamkari', 'Bandhani', 'Leheriya', 'Patola', 'Paithani', 'Baluchari', 'Dhakai', 'Jamdani', 'Khesh', 'Muga', 'Eri', 'Mysore', 'Uppada', 'Gadwal', 'Venkatagiri', 'Narayanpet', 'Bomkai', 'Sambalpuri', 'Khandua', 'Kotpad', 'Bhagalpur', 'Tussar', 'Muga', 'Eri', 'Mysore Silk', 'Kanchipuram', 'Kanjivaram', 'Banarasi Silk', 'Chanderi', 'Maheshwari', 'Kota Doria', 'Gota Work', 'Zari Work', 'Zardosi Work', 'Resham Work', 'Kalamkari', 'Bandhani', 'Leheriya', 'Patola', 'Paithani', 'Baluchari', 'Dhakai', 'Jamdani', 'Khesh', 'Muga', 'Eri', 'Mysore', 'Uppada', 'Gadwal', 'Venkatagiri', 'Narayanpet', 'Bomkai', 'Sambalpuri', 'Khandua', 'Kotpad', 'Bhagalpur', 'Tussar', 'Muga', 'Eri', 'Mysore Silk', 'Kanchipuram', 'Kanjivaram', 'Banarasi Silk', 'Chanderi', 'Maheshwari', 'Kota Doria', 'Gota Work', 'Zari Work', 'Zardosi Work', 'Resham Work', 'Kalamkari', 'Bandhani', 'Leheriya', 'Patola', 'Paithani', 'Baluchari', 'Dhakai', 'Jamdani', 'Khesh', 'Muga', 'Eri', 'Mysore', 'Uppada', 'Gadwal', 'Venkatagiri', 'Narayanpet', 'Bomkai', 'Sambalpuri', 'Khandua', 'Kotpad', 'Bhagalpur', 'Tussar', 'Muga', 'Eri', 'Mysore Silk', 'Kanchipuram', 'Kanjivaram', 'Banarasi Silk', 'Chanderi', 'Maheshwari', 'Kota Doria', 'Gota Work', 'Zari Work', 'Zardosi Work', 'Resham Work', 'Kalamkari', 'Bandhani', 'Leheriya', 'Patola', 'Paithani', 'Baluchari', 'Dhakai', 'Jamdani', 'Khesh', 'Muga', 'Eri', 'Mysore', 'Uppada', 'Gadwal', 'Venkatagiri', 'Narayanpet', 'Bomkai', 'Sambalpuri', 'Khandua', 'Kotpad', 'Bhagalpur', 'Tussar', 'Muga', 'Eri', 'Mysore Silk', 'Kanchipuram', 'Kanjivaram', 'Banarasi Silk', 'Chanderi', 'Maheshwari', 'Kota Doria', 'Gota Work', 'Zari Work', 'Zardosi Work', 'Resham Work'];
+  
+  // Extract unique fabrics from products
+  const availableFabrics = React.useMemo(() => {
+    const fabricSet = new Set();
+    
+    products.forEach(product => {
+      // Check multiple possible fields that might contain fabric info
+      const possibleFabricFields = [
+        product.fabric,
+        product.material,
+        product.product_info?.fabric,
+        product.product_info?.material,
+        product.details?.fabric,
+        product.details?.material,
+        product.description,
+        product.title
+      ];
+      
+      // Check each field for fabric matches
+      possibleFabricFields.forEach(field => {
+        if (field) {
+          const fieldStr = String(field).toLowerCase();
+          allPossibleFabrics.forEach(fabric => {
+            if (fieldStr.includes(fabric.toLowerCase())) {
+              fabricSet.add(fabric);
+            }
+          });
+        }
+      });
+    });
+    
+    // Add some common fabrics if none found
+    if (fabricSet.size === 0) {
+      return ['Silk', 'Cotton', 'Georgette', 'Chiffon', 'Linen', 'Satin', 'Velvet', 'Organza'];
+    }
+    
+    return Array.from(fabricSet).sort();
+  }, [products]);
   
   const priceRanges = [
     { id: 1, label: '₹300 - ₹1,000', min: 300, max: 1000 },
@@ -97,13 +135,33 @@ const ProductList = ({ defaultCategory } = {}) => {
       }
     }
     
-    // Filter by material
+    // Filter by fabric
     if (selectedFabrics.length > 0) {
-      result = result.filter(p => 
-        p.material && selectedFabrics.some(material => 
-          p.material.toLowerCase().includes(material.toLowerCase())
-        )
-      );
+      result = result.filter(p => {
+        // Check multiple possible fields that might contain fabric info
+        const possibleFabricFields = [
+          p.fabric,
+          p.material,
+          p.product_info?.fabric,
+          p.product_info?.material,
+          p.details?.fabric,
+          p.details?.material,
+          p.description,
+          p.title
+        ];
+        
+        // Convert all fabric fields to a single searchable string
+        const fabricSearchString = possibleFabricFields
+          .filter(Boolean)
+          .map(String)
+          .join(' ')
+          .toLowerCase();
+        
+        // Check if any selected fabric is in the search string
+        return selectedFabrics.some(fabric => 
+          fabricSearchString.includes(fabric.toLowerCase())
+        );
+      });
     }
     
     setFilteredProducts(result);
@@ -196,25 +254,36 @@ const ProductList = ({ defaultCategory } = {}) => {
           className="flex justify-between items-center w-full mb-4"
         >
           <h4 className="text-sm font-medium text-gray-900">Fabric</h4>
-          {openSections.material ? <FaChevronUp className="text-gray-400" /> : <FaChevronDown className="text-gray-400" />}
+          <div className="flex items-center">
+            {selectedFabrics.length > 0 && (
+              <span className="mr-2 inline-flex items-center justify-center h-5 w-5 bg-pink-100 text-pink-800 text-xs font-semibold rounded-full">
+                {selectedFabrics.length}
+              </span>
+            )}
+            {openSections.material ? <FaChevronUp className="text-gray-400" /> : <FaChevronDown className="text-gray-400" />}
+          </div>
         </button>
         
         {openSections.material && (
           <div className="space-y-3 max-h-64 overflow-y-auto">
-            {materials.map(material => (
-              <div key={material} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`material-${material}`}
-                  checked={selectedFabrics.includes(material)}
-                  onChange={() => toggleFabric(material)}
-                  className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded cursor-pointer"
-                />
-                <label htmlFor={`material-${material}`} className="ml-3 text-sm text-gray-700 cursor-pointer">
-                  {material}
-                </label>
-              </div>
-            ))}
+            {availableFabrics && availableFabrics.length > 0 ? (
+              availableFabrics.map(material => (
+                <div key={material} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`material-${material}`}
+                    checked={selectedFabrics.includes(material)}
+                    onChange={() => toggleFabric(material)}
+                    className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded cursor-pointer"
+                  />
+                  <label htmlFor={`material-${material}`} className="ml-3 text-sm text-gray-700 cursor-pointer">
+                    {material}
+                  </label>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">No fabric options available</p>
+            )}
           </div>
         )}
       </div>
