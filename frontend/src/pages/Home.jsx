@@ -7,11 +7,18 @@ const Home = () => {
     <div className="min-h-screen pt-0 pb-16 md:pb-0">
       {/* Hero Section with Banner */}
       <section className="w-full pt-0">
-        <img 
-          src="https://res.cloudinary.com/duc9svg7w/image/upload/v1761978463/Effortlessly_smoothen_every_fabric_20251101_014257_0000_pmkwyh.png" 
-          alt="SareeSansaar - Premium Saree Collection"
-          className="block w-full h-auto object-cover"
-        />
+        <picture>
+          <source 
+            media="(max-width: 767px)" 
+            srcSet="https://res.cloudinary.com/duc9svg7w/image/upload/v1762252971/Effortlessly_smoothen_every_fabric_20251031_231634_0000_1_dmcl0s.png" 
+          />
+          <img 
+            src="https://res.cloudinary.com/duc9svg7w/image/upload/v1761978463/Effortlessly_smoothen_every_fabric_20251101_014257_0000_pmkwyh.png" 
+            alt="SareeSansaar - Premium Saree Collection"
+            className="w-full h-auto object-cover"
+            loading="lazy"
+          />
+        </picture>
       </section>
 
       {/* Featured Collections */}
