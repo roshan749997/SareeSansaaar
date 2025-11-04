@@ -94,7 +94,7 @@ const ProductDetail = () => {
   const sellingPrice = Math.round(saree.mrp - (saree.mrp * (saree.discountPercent || 0) / 100));
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4">
+    <div className="min-h-screen bg-gray-50 pb-20 sm:pb-4">
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
@@ -171,7 +171,29 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              {/* Sticky Buttons Container - Hidden on larger screens */}
+              <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-2 z-50 sm:hidden">
+                <div className="flex gap-2 max-w-md mx-auto">
+                  <button 
+                    className="flex-1 bg-white text-[#800020] py-2.5 rounded-lg flex items-center justify-center space-x-1.5 hover:bg-[#660019] hover:text-white transition-colors disabled:opacity-70 cursor-pointer shadow-sm border border-[#800020] text-sm"
+                    onClick={handleAddToCart}
+                    disabled={isAdding}
+                  >
+                    <FaShoppingCart className="h-4 w-4" />
+                    <span className="font-medium">{isAdding ? 'Adding...' : 'Add to Cart'}</span>
+                  </button>
+                  <button 
+                    className="flex-1 bg-[#800020] text-white py-2.5 rounded-lg flex items-center justify-center space-x-1.5 hover:bg-[#660019] transition-colors cursor-pointer shadow-sm border border-[#800020] text-sm"
+                    onClick={handleBuyNow}
+                  >
+                    <FaBolt className="h-4 w-4" />
+                    <span className="font-medium">Buy Now</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Regular Buttons - Hidden on mobile */}
+              <div className="hidden sm:flex flex-col sm:flex-row gap-3 mb-6">
                 <button 
                   className="flex-1 bg-white text-[#800020] py-2.5 px-5 rounded-lg flex items-center justify-center space-x-2 hover:bg-[#660019] hover:text-white transition-colors disabled:opacity-70 cursor-pointer shadow-sm border border-[#800020]"
                   onClick={handleAddToCart}

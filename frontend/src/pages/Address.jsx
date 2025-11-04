@@ -67,15 +67,15 @@ export default function AddressForm() {
   // Calculate price details
   const calculatePriceDetails = () => {
     const subtotal = total || 0;
-    const protectFee = Math.round(subtotal * 0.02); // 2% of subtotal
-    const tax = Math.round(subtotal * 0.05); // 5% GST
-    const totalPayable = subtotal + protectFee + tax;
+    const shippingCharge = subtotal < 5000 ? 99 : 0;
+    const tax = Math.round(subtotal * 0.05); // 5% tax
+    const totalPayable = subtotal + shippingCharge + tax;
     const savings = Math.round(subtotal * 0.35); // Assuming 35% savings
     const supercoins = Math.min(30, Math.floor(subtotal / 1000) * 10); // 10 supercoins per 1000 spent, max 30
 
     return {
       subtotal,
-      protectFee,
+      shippingCharge,
       tax,
       total: totalPayable,
       savings,
@@ -519,16 +519,18 @@ export default function AddressForm() {
 
             <div className="space-y-3 mb-4 pb-4 border-b">
               <div className="flex justify-between text-sm">
-                <span>Price ({priceDetails.items} items)</span>
+                <span>Price ({priceDetails.items} {priceDetails.items === 1 ? 'item' : 'items'})</span>
                 <span>₹{priceDetails.subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Shipping</span>
+                <span className={priceDetails.shippingCharge > 0 ? 'text-gray-600' : 'text-green-600'}>
+                  {priceDetails.shippingCharge > 0 ? `₹${priceDetails.shippingCharge.toLocaleString()}` : 'Free'}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Tax (5%)</span>
                 <span>₹{priceDetails.tax.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span>Protect Promise Fee</span>
-                <span>₹{priceDetails.protectFee.toLocaleString()}</span>
               </div>
             </div>
 

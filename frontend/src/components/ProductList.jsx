@@ -311,14 +311,16 @@ const ProductList = ({ defaultCategory } = {}) => {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-6 sticky top-0 bg-gray-50 pt-6 pb-2 z-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-            {subCategoryName
-              ? normalize(subCategoryName)
-              : (categoryName || defaultCategory
-                  ? normalize(categoryName || defaultCategory)
-                  : 'All Sarees')}
-          </h1>
-          <div className="w-24 h-1 bg-gradient-to-r from-[#7A2A2A] via-[#A56E2C] to-[#C89D4B] mt-2 rounded-full"></div>
+          <div className="flex flex-col items-center">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 tracking-wide text-center mb-3">
+              {subCategoryName
+                ? normalize(subCategoryName)
+                : (categoryName || defaultCategory
+                    ? normalize(categoryName || defaultCategory)
+                    : 'All Sarees')}
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#7A2A2A] via-[#A56E2C] to-[#C89D4B] rounded-full"></div>
+          </div>
         </div>
 
         <div className="flex gap-6 relative">
