@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/* Prevent horizontal scrolling and ensure proper layout */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Ensure all elements stay within viewport */
+* {
+  box-sizing: border-box;
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
