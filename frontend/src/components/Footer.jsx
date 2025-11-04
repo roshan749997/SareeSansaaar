@@ -84,7 +84,7 @@ const Footer = () => {
             {/* Logo/Brand */}
           <Link to="/" className="flex-shrink-0">
             <img 
-              src="src/assets/image.png" 
+              src="https://res.cloudinary.com/duc9svg7w/image/upload/v1762245870/image_okvjvm.png" 
               alt="SareeSansaar Logo" 
               className="h-25 md:h-70 w-auto hover:scale-105 transition-transform duration-300 mb-6"
             />
