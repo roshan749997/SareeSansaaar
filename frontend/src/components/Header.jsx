@@ -112,7 +112,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-16 md:top-20 z-40 bg-white border-t border-gray-200 shadow-sm">
+    <header className="bg-white">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center justify-center space-x-8 py-3" ref={headerRef}>
@@ -208,9 +208,9 @@ const Header = () => {
           
           {/* Subcategories */}
           {activeCategory && (
-            <div className="fixed inset-0 z-50 bg-white overflow-y-auto pt-20">
+            <div className="fixed inset-0 z-[60] bg-white overflow-y-auto">
               {/* Close button at top */}
-              <div className="fixed top-16 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-50">
+              <div className="sticky top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-10">
                 <h3 className="text-base font-medium text-gray-800">
                   {categories.find(cat => cat.name === activeCategory)?.name}
                 </h3>
@@ -224,8 +224,31 @@ const Header = () => {
                   </svg>
                 </button>
               </div>
-              <div className="relative max-h-[calc(100vh-180px)] overflow-y-auto">
-                <div className="divide-y divide-gray-100">
+              <div className="relative">
+                <div className="divide-y divide-gray-100 pt-2">
+                  <Link
+                    to={categories.find(cat => cat.name === activeCategory)?.path}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveCategory(null);
+                      const p = categories.find(cat => cat.name === activeCategory)?.path;
+                      if (p) navigate(p);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveCategory(null);
+                      const p = categories.find(cat => cat.name === activeCategory)?.path;
+                      if (p) navigate(p);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="block px-6 py-3 text-sm font-medium text-gray-800 hover:text-rose-500 hover:bg-rose-50 transition-colors duration-200"
+                  >
+                    {`ALL ${categories.find(cat => cat.name === activeCategory)?.name || ''}`}
+                  </Link>
+
                   {categories
                     .find(cat => cat.name === activeCategory)
                     ?.subcategories?.map((subcategory) => (

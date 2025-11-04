@@ -459,7 +459,7 @@ const ProductList = ({ defaultCategory } = {}) => {
                         }}
                       />
                       {(p.discountPercent > 0 || p.discount) && (
-                        <span className="absolute top-3 right-3 bg-white text-green-600 border border-green-600 text-xs font-bold px-2 py-1 rounded-full">
+                        <span className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white text-green-600 border border-green-600 text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
                           {p.discountPercent || p.discount}% OFF
                         </span>
                       )}

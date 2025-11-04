@@ -132,9 +132,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`sticky top-0 z-50 bg-white transition-all duration-300 ${
-        isScrolled ? 'shadow-lg' : 'shadow-sm'
-      }`}
+      className="z-50 bg-white"
     >
       <div className="w-full px-0 sm:px-1 md:px-2 lg:px-3">
         <div className="flex items-center justify-between h-16 md:h-20">
