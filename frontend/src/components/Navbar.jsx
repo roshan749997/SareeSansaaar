@@ -156,7 +156,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className="z-50 bg-white"
+      className="relative z-[70] bg-white"
     >
       <div className="w-full px-0 sm:px-1 md:px-2 lg:px-3">
         <div className="flex items-center justify-between h-16 md:h-20">
@@ -192,7 +192,7 @@ const Navbar = () => {
                 </svg>
               </button>
               {searchOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-[80] overflow-hidden">
                   {searchLoading && (
                     <div className="px-4 py-3 text-sm text-gray-500">Searching…</div>
                   )}
