@@ -10,7 +10,7 @@ const Home = () => {
         <picture>
           <source 
             media="(max-width: 767px)" 
-            srcSet="https://res.cloudinary.com/duc9svg7w/image/upload/v1762252971/Effortlessly_smoothen_every_fabric_20251031_231634_0000_1_dmcl0s.png" 
+            srcSet="https://res.cloudinary.com/duc9svg7w/image/upload/v1762318223/Beige_And_Brown_Luxury_Shopping_Guide_Instagram_Post_20251104_225913_0000_tbyvtj.png " 
           />
           <img 
             src="https://res.cloudinary.com/duc9svg7w/image/upload/v1761978463/Effortlessly_smoothen_every_fabric_20251101_014257_0000_pmkwyh.png" 
