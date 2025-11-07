@@ -9,6 +9,22 @@ const OrderItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const ShippingAddressSchema = new mongoose.Schema(
+  {
+    fullName: String,
+    mobileNumber: String,
+    pincode: String,
+    locality: String,
+    address: String,
+    city: String,
+    state: String,
+    landmark: String,
+    alternatePhone: String,
+    addressType: String,
+  },
+  { _id: false }
+);
+
 const OrderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
@@ -19,6 +35,7 @@ const OrderSchema = new mongoose.Schema(
     razorpayOrderId: { type: String },
     razorpayPaymentId: { type: String },
     razorpaySignature: { type: String },
+    shippingAddress: { type: ShippingAddressSchema },
   },
   { timestamps: true }
 );

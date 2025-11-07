@@ -21,7 +21,7 @@ export async function signup(req, res) {
     const token = generateJwt(user.id);
     return res.status(201).json({
       message: 'Account created',
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, isAdmin: !!user.isAdmin },
       token,
     });
   } catch (err) {
@@ -41,7 +41,7 @@ export async function signin(req, res) {
     const token = generateJwt(user.id);
     return res.json({
       message: 'Signed in',
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, isAdmin: !!user.isAdmin },
       token,
     });
   } catch (err) {

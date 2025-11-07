@@ -25,6 +25,15 @@ export const api = {
   getCart: () => request('/cart', { method: 'GET' }),
   addToCart: ({ productId, quantity = 1 }) => request('/cart/add', { method: 'POST', body: JSON.stringify({ productId, quantity }) }),
   removeFromCart: (productId) => request(`/cart/remove/${productId}`, { method: 'DELETE' }),
+  // Admin endpoints
+  admin: {
+    stats: () => request('/admin/stats', { method: 'GET' }),
+    createProduct: (payload) => request('/admin/products', { method: 'POST', body: JSON.stringify(payload) }),
+    listProducts: () => request('/admin/products', { method: 'GET' }),
+    deleteProduct: (id) => request(`/admin/products/${id}`, { method: 'DELETE' }),
+    listOrders: () => request('/admin/orders', { method: 'GET' }),
+    listAddresses: () => request('/admin/addresses', { method: 'GET' }),
+  },
 };
 
 export default api;

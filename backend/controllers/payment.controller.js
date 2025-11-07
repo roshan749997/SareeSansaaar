@@ -2,6 +2,7 @@ import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import Cart from '../models/Cart.js';
 import Order from '../models/Order.js';
+import { Address } from '../models/Address.js';
 
 const getClient = () => {
   const key_id = process.env.RAZORPAY_KEY_ID || '';
@@ -78,6 +79,16 @@ export const verifyPayment = async (req, res) => {
     });
     const amount = items.reduce((sum, it) => sum + (it.price * it.quantity), 0);
 
+    // Load user's current address to snapshot into the order
+    let shippingAddress = null;
+    try {
+      const addr = await Address.findOne({ userId });
+      if (addr) {
+        const { fullName, mobileNumber, pincode, locality, address, city, state, landmark, alternatePhone, addressType } = addr;
+        shippingAddress = { fullName, mobileNumber, pincode, locality, address, city, state, landmark, alternatePhone, addressType };
+      }
+    } catch {}
+
     const order = await Order.create({
       user: userId,
       items,
@@ -87,6 +98,7 @@ export const verifyPayment = async (req, res) => {
       razorpayOrderId: razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
       razorpaySignature: razorpay_signature,
+      shippingAddress,
     });
 
     cart.items = [];
