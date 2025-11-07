@@ -19,6 +19,11 @@ import Search from '../pages/Search';
 import MobileBottomNav from '../components/MobileBottomNav';
 import { useEffect } from 'react';
 import Wishlist from '../pages/Wishlist';
+import AdminDashboard from '../pages/admin/AdminDashboard';
+import AdminProducts from '../pages/admin/AdminProducts';
+import AdminOrders from '../pages/admin/AdminOrders';
+import AdminLayout from '../pages/admin/AdminLayout';
+import AdminAddresses from '../pages/admin/AdminAddresses';
 
 const isAuthenticated = () => {
   try {
@@ -29,10 +34,29 @@ const isAuthenticated = () => {
   }
 };
 
+const isAdmin = () => {
+  try {
+    return localStorage.getItem('auth_is_admin') === 'true';
+  } catch {
+    return false;
+  }
+};
+
 const RequireAuth = ({ children }) => {
   const location = useLocation();
   if (!isAuthenticated()) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
+  return children;
+};
+
+const RequireAdmin = ({ children }) => {
+  const location = useLocation();
+  if (!isAuthenticated()) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
+  if (!isAdmin()) {
+    return <Navigate to="/" replace />;
   }
   return children;
 };
@@ -87,6 +111,13 @@ const Router = () => {
         <Route path="signin" element={<RedirectIfAuth><SignIn /></RedirectIfAuth>} />
         <Route path="signup" element={<RedirectIfAuth><SignUp /></RedirectIfAuth>} />
         <Route path="forgot-password" element={<ForgotPassword />} />
+        {/* Admin routes */}
+        <Route path="admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="addresses" element={<AdminAddresses />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </CartProvider>
