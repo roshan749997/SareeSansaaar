@@ -6,7 +6,8 @@ export default function auth(req, res, next) {
   const token = parts.length === 2 && /^Bearer$/i.test(parts[0]) ? parts[1] : null;
   if (!token) return res.status(401).json({ message: 'No token provided' });
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET || 'dev_secret_change_me';
+    const payload = jwt.verify(token, secret);
     req.userId = payload.id || payload._id || payload.userId;
     if (!req.userId) return res.status(401).json({ message: 'Invalid token' });
     next();

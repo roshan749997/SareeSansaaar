@@ -28,6 +28,11 @@ const SignIn = () => {
       const resp = await api.signin({ email: formData.email, password: formData.password });
       // store token then redirect to intended page or home
       if (resp?.token) localStorage.setItem('auth_token', resp.token);
+      if (resp?.user?.isAdmin) {
+        localStorage.setItem('auth_is_admin', 'true');
+      } else {
+        try { localStorage.removeItem('auth_is_admin'); } catch {}
+      }
       const redirectTo = location.state?.from?.pathname || '/';
       navigate(redirectTo, { replace: true });
     } catch (err) {

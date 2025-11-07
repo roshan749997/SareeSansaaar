@@ -9,6 +9,7 @@ import cartRoutes from './routes/cart.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import addressRoutes from './routes/address.routes.js';
 import ordersRoutes from './routes/orders.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 import connectDB from './config/DataBaseConnection.js';
 
@@ -34,6 +35,7 @@ server.use('/api/cart', cartRoutes);
 server.use('/api/payment', paymentRoutes);
 server.use('/api/address', addressRoutes);
 server.use('/api/orders', ordersRoutes);
+server.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 
