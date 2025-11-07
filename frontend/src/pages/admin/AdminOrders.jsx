@@ -164,23 +164,37 @@ const AdminOrders = () => {
                 <div className="text-sm text-gray-700">{o.user?.name || ''}</div>
                 <div className="text-xs text-gray-500">{o.user?.email || ''}</div>
                 <div className="text-xs text-gray-500">{new Date(o.createdAt).toLocaleString()}</div>
-                <div className="text-xs text-gray-600">Status</div>
-                <div className="flex items-center gap-2">
-                  <select
-                    className="border rounded px-2 py-1 text-sm w-full"
-                    value={getTemp(o._id, o.status)}
-                    onChange={(e)=>changeTemp(o._id, e.target.value)}
-                  >
-                    {statusOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Order Status</div>
+                    <div className="flex items-center gap-2">
+                      <select
+                        className="border rounded px-2 py-1 text-sm w-full"
+                        value={getTemp(o._id, o.status)}
+                        onChange={(e)=>changeTemp(o._id, e.target.value)}
+                      >
+                        {statusOptions.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Payment Status</div>
+                    <div className="flex items-center h-[34px]">
+                      <StatusBadge 
+                        paymentStatus={o.status === 'failed' ? 'failed' : o.razorpayPaymentId ? 'paid' : 'pending'}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end mt-2">
                   <button
                     onClick={()=>saveStatus(o._id)}
                     disabled={updatingId===o._id || String(getTemp(o._id, o.status))===String(o.status)}
-                    className={`px-3 py-1 rounded text-white ${updatingId===o._id ? 'bg-gray-400' : 'bg-rose-600 hover:bg-rose-700'} disabled:opacity-60`}
+                    className={`px-3 py-1 rounded text-white text-sm ${updatingId===o._id ? 'bg-gray-400' : 'bg-rose-600 hover:bg-rose-700'} disabled:opacity-60`}
                   >
-                    {updatingId===o._id ? 'Saving...' : 'Save'}
+                    {updatingId===o._id ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </div>
