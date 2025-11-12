@@ -33,7 +33,7 @@ router.get('/google',
 
 router.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/auth/failure` }),
+  passport.authenticate('google', { failureRedirect: `https://sareesansaaar-1.onrender.com/auth/failure` }),
   async (req, res) => {
     try {
       const user = req.user;
@@ -51,9 +51,9 @@ router.get(
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      return res.redirect(`${FRONTEND_URL}/auth/success`);
+      return res.redirect(`https://sareesansaaar-1.onrender.com/auth/success`);
     } catch (e) {
-      return res.redirect(`${FRONTEND_URL}/auth/failure`);
+      return res.redirect(`https://sareesansaaar-1.onrender.com/auth/failure`);
     }
   }
 );
