@@ -26,6 +26,10 @@ import AdminProducts from '../pages/admin/AdminProducts';
 import AdminOrders from '../pages/admin/AdminOrders';
 import AdminLayout from '../pages/admin/AdminLayout';
 import AdminAddresses from '../pages/admin/AdminAddresses';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import TermsAndConditions from '../pages/TermsAndConditions';
+import ShippingPolicy from '../pages/ShippingPolicy';
+import RefundCancellationPolicy from '../pages/RefundCancellationPolicy';
 
 const isAuthenticated = () => {
   try {
@@ -102,6 +106,10 @@ const Router = () => {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="wishlist" element={<Wishlist />} />
+          <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<TermsAndConditions />} />
+          <Route path="shipping" element={<ShippingPolicy />} />
+          <Route path="returns" element={<RefundCancellationPolicy />} />
 
           {/* Private route(s) */}
           <Route path="cart" element={<RequireAuth><Cart /></RequireAuth>} />

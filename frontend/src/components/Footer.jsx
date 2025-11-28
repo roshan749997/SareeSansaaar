@@ -183,7 +183,7 @@ const Footer = () => {
             © {currentYear} <span className="font-semibold text-white">SareeSansaar</span>. All rights reserved.
           </p>
           <p className="text-xs text-gray-400 mb-4">
-            GSTIN: 27ABCDE1234F1Z5 | CIN: U74999MH2020PTC123456
+          GSTIN: 24ABRCS1773P1ZI 
           </p>
           <div className="flex justify-center space-x-4 text-xs text-gray-400">
             <Link to="/privacy" onClick={scrollToTop} className="hover:text-rose-500 transition-colors duration-200">
@@ -191,7 +191,7 @@ const Footer = () => {
             </Link>
             <span className="text-gray-600">•</span>
             <Link to="/terms" onClick={scrollToTop} className="hover:text-white transition-colors duration-200">
-              Terms of Service
+            Terms & Conditions
             </Link>
             <span className="text-gray-600">•</span>
             <Link to="/shipping" onClick={scrollToTop} className="hover:text-white transition-colors duration-200">
@@ -199,7 +199,7 @@ const Footer = () => {
             </Link>
             <span className="text-gray-600">•</span>
             <Link to="/returns" onClick={scrollToTop} className="hover:text-white transition-colors duration-200">
-              Return Policy
+            Refund/Cancellation Policy
             </Link>
           </div>
         </div>
