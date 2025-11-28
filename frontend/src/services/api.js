@@ -1,14 +1,70 @@
-const API_URL = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api`;
+// Auto-detect backend URL in production
+const getBackendUrl = () => {
+  // If explicitly set via env variable, use it
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  
+  // In production (Render), try to detect backend URL
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    // If frontend is on Render, try common backend URL patterns
+    if (hostname.includes('onrender.com')) {
+      // Try to construct backend URL from frontend URL
+      // Common pattern: frontend might be on one service, backend on another
+      // You may need to set VITE_BACKEND_URL in Render environment variables
+      // For now, try common backend service names
+      const possibleBackends = [
+        'https://sarees-backend.onrender.com',
+        'https://sareesansaar-backend.onrender.com',
+        'https://sareesansaaar-1.onrender.com', // Based on screenshot URL
+      ];
+      
+      // Return first possible backend (you should set VITE_BACKEND_URL in Render)
+      console.warn('VITE_BACKEND_URL not set. Please set it in Render environment variables.');
+      return possibleBackends[0] || 'http://localhost:5000';
+    }
+  }
+  
+  // Default to localhost for development
+  return 'http://localhost:5000';
+};
+
+const API_URL = `${getBackendUrl()}/api`;
 
 export const fetchSarees = async (category) => {
   try {
-    const response = await fetch(`${API_URL}/products${category ? `?category=${encodeURIComponent(category)}` : ''}`);
+    const url = `${API_URL}/products${category ? `?category=${encodeURIComponent(category)}` : ''}`;
+    console.log('Fetching products from:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+    
     if (!response.ok) {
-      throw new Error('Failed to fetch sarees');
+      const errorText = await response.text();
+      console.error('API Error Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: url,
+        body: errorText
+      });
+      throw new Error(`Failed to fetch sarees: ${response.status} ${response.statusText}`);
     }
-    return await response.json();
+    
+    const data = await response.json();
+    console.log('Products fetched successfully:', data?.length || 0, 'items');
+    return data;
   } catch (error) {
     console.error('Error fetching sarees:', error);
+    // Provide more helpful error message
+    if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+      throw new Error('Unable to connect to server. Please check if the backend is running and VITE_BACKEND_URL is set correctly.');
+    }
     throw error;
   }
 };

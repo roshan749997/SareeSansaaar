@@ -32,6 +32,7 @@ const allowedOrigins = [
   'https://sarees-frontend.onrender.com',
   'https://sarees-jwhn.onrender.com',
   'https://sareesansaar-1.onrender.com',
+  'https://sareesansaaar-1.onrender.com', // Frontend URL from screenshot
 ];
 
 server.use(cors({
