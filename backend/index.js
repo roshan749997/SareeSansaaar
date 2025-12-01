@@ -18,52 +18,43 @@ import cookieJwtAuth from './middleware/authMiddleware.js';
 
 configDotenv();
 
-console.log('Razorpay env loaded:', Boolean(process.env.RAZORPAY_KEY_ID), Boolean(process.env.RAZORPAY_KEY_SECRET));
+console.log(
+  'Razorpay env loaded:',
+  Boolean(process.env.RAZORPAY_KEY_ID),
+  Boolean(process.env.RAZORPAY_KEY_SECRET)
+);
 
 const server = express();
 
-// Needed when running behind a proxy (Render) to correctly set secure cookies
+// When behind proxy (Render)
 server.set('trust proxy', 1);
 
-// Centralized CORS: allow specific dev/prod origins only
-const allowedOrigins = [
-  // 'http://localhost:5173',
-  'https://saarisanskar.in',
-  'https://api.saarisanskar.in',
-  // 'http://localhost:5174',
-  // 'https://sarees-frontend.onrender.com',
-  // 'https://sarees-jwhn.onrender.com',
-  // 'https://sareesansaar-1.onrender.com',
-  'https://sareesansaaar-1.onrender.com', // Frontend URL from screenshot
-];
-
-server.use(cors({
-  origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    console.log('CORS BLOCKED:', origin);
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
+// 🚀 **OPEN CORS FOR ALL ORIGINS**
+server.use(
+  cors({
+    origin: true, // reflects request origin
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 
 server.use(express.json());
 server.use(cookieParser());
 
-// Initialize Passport strategies
+// Initialize Passport
 setupPassport();
 server.use(passport.initialize());
 
+// Health check
 server.get('/api/health', (req, res) => res.json({ ok: true }));
-// Cookie-JWT protected current user info (Google/local unified)
+
+// Current user route (cookie + JWT)
 server.get('/api/me', cookieJwtAuth, (req, res) => {
-  const user = req.user;
-  res.json({ user });
+  res.json({ user: req.user });
 });
 
+// Routes
 server.use('/api/auth', authRoutes);
 server.use('/api/header', headerRoutes);
 server.use('/api/products', productRoutes);
@@ -75,8 +66,10 @@ server.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 
+// Connect DB
 await connectDB(process.env.MONGODB_URI || '');
 
+// Start server
 server.listen(PORT, () => {
   console.log('Server is running at', PORT);
 });
