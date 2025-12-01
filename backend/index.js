@@ -16,7 +16,7 @@ import adminRoutes from './routes/admin.routes.js';
 import connectDB from './config/DataBaseConnection.js';
 import cookieJwtAuth from './middleware/authMiddleware.js';
 
-configDotenv();       
+configDotenv();
 
 console.log('Razorpay env loaded:', Boolean(process.env.RAZORPAY_KEY_ID), Boolean(process.env.RAZORPAY_KEY_SECRET));
 
@@ -28,7 +28,8 @@ server.set('trust proxy', 1);
 // Centralized CORS: allow specific dev/prod origins only
 const allowedOrigins = [
   // 'http://localhost:5173',
-  https://saarisanskar.in/,
+  'https://saarisanskar.in',
+  'https://api.saarisanskar.in',
   // 'http://localhost:5174',
   // 'https://sarees-frontend.onrender.com',
   // 'https://sarees-jwhn.onrender.com',
