@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaRupeeSign, FaSpinner, FaFilter, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { fetchSarees } from '../services/api';
 
-// Add CSS to hide scrollbar
+// Add CSS to hide scrollbar and loading animation
 const styles = `
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -11,6 +11,14 @@ const styles = `
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(300%);
+    }
   }
 `;
 
@@ -90,12 +98,25 @@ const ProductList = ({ defaultCategory } = {}) => {
     { id: 10, label: 'Above ₹10,000', min: 10001, max: Infinity },
   ];
   
+  const normalize = (s) => {
+    if (!s) return '';
+    const t = s.replace(/-/g, ' ').toLowerCase();
+    return t.replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
+  const effectiveCategory = subCategoryName
+    ? normalize(subCategoryName)
+    : (categoryName || defaultCategory) ? normalize(categoryName || defaultCategory) : '';
+  
   // Fetch products
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
+        // Clear products immediately when category changes
+        setProducts([]);
+        setFilteredProducts([]);
         const data = await fetchSarees(effectiveCategory || '');
         setProducts(data || []);
         setFilteredProducts(data || []);
@@ -108,17 +129,7 @@ const ProductList = ({ defaultCategory } = {}) => {
     };
 
     load();
-  }, [categoryName, subCategoryName, defaultCategory]);
-
-  const normalize = (s) => {
-    if (!s) return '';
-    const t = s.replace(/-/g, ' ').toLowerCase();
-    return t.replace(/\b\w/g, (c) => c.toUpperCase());
-  };
-
-  const effectiveCategory = subCategoryName
-    ? normalize(subCategoryName)
-    : (categoryName || defaultCategory) ? normalize(categoryName || defaultCategory) : '';
+  }, [effectiveCategory]);
   
   // Apply filters
   useEffect(() => {
@@ -304,7 +315,9 @@ const ProductList = ({ defaultCategory } = {}) => {
       <style>{styles}</style>
       {loading && (
         <div className="fixed left-0 right-0 top-0 z-50">
-          <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-pink-500 to-amber-500 animate-pulse"></div>
+          <div className="h-1 bg-gradient-to-r from-indigo-500 via-pink-500 to-amber-500 relative overflow-hidden">
+            <div className="absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_1.5s_infinite]"></div>
+          </div>
         </div>
       )}
 
@@ -430,7 +443,18 @@ const ProductList = ({ defaultCategory } = {}) => {
             </div>
             
             {/* Product Grid */}
-            {filteredProducts.length === 0 ? (
+            {loading ? (
+              <div className="relative min-h-[400px] flex items-center justify-center">
+                {/* Rounded Loading Spinner */}
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 border-4 border-gray-200 rounded-full"></div>
+                    <div className="w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+                  </div>
+                  <p className="text-gray-600 font-medium">Loading products...</p>
+                </div>
+              </div>
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-lg shadow-sm">
                 <p className="text-gray-500 text-lg">No products found matching your filters.</p>
                 <button
