@@ -4,13 +4,14 @@ import bcrypt from 'bcryptjs';
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, index: true },
+    email: { type: String, required: false, unique: true, sparse: true, lowercase: true, index: true },
+    phone: { type: String, unique: true, sparse: true, index: true },
     // Optional for OAuth users
     passwordHash: { type: String },
     // OAuth fields
     googleId: { type: String, unique: true, sparse: true, index: true },
     avatar: { type: String },
-    provider: { type: String, enum: ['local', 'google'], default: 'google' },
+    provider: { type: String, enum: ['local', 'google', 'otp'], default: 'local' },
     resetPasswordToken: { type: String },
     resetPasswordExpiresAt: { type: Date },
     isAdmin: { type: Boolean, default: false },
@@ -27,8 +28,8 @@ userSchema.statics.hashPassword = async function hashPassword(plainPassword) {
   return bcrypt.hash(plainPassword, salt);
 };
 
-export const User = mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
+// Export as default
 export default User;
-
 

@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import passport, { setupPassport } from './config/passport.js';
 
 import authRoutes from './routes/auth.routes.js';
-import otpRoutes from './routes/otp.routes.js';
+// OTP routes are already included in auth.routes.js, no need to import separately
 import headerRoutes from './routes/header.routes.js';
 import productRoutes from './routes/product.routes.js';
 import cartRoutes from './routes/cart.routes.js';
@@ -58,7 +58,7 @@ server.get('/api/me', cookieJwtAuth, (req, res) => {
 
 // Routes
 server.use('/api/auth', authRoutes);
-server.use('/api/auth', otpRoutes);
+// OTP routes are already included in auth.routes.js
 server.use('/api/header', headerRoutes);
 server.use('/api/products', productRoutes);
 server.use('/api/cart', cartRoutes);

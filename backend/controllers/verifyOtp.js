@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { otpStore, hashOTP } from './sendOtp.js';
+import User from '../models/User.js';
 
 /**
  * Verify OTP and generate JWT token
@@ -57,6 +58,28 @@ export async function verifyOtp(req, res) {
     // OTP verified successfully - remove from store
     otpStore.delete(phone);
 
+    // Find or create user by phone number
+    let user = await User.findOne({ phone });
+    
+    if (!user) {
+      // Create new user with phone number
+      user = await User.create({
+        name: `User ${phone.slice(-4)}`, // Default name with last 4 digits
+        phone,
+        provider: 'otp',
+      });
+      console.log('New user created via OTP:', { id: String(user._id), phone: user.phone });
+    } else {
+      // Update user if phone was not set or provider needs update
+      if (!user.phone) {
+        user.phone = phone;
+      }
+      if (user.provider !== 'otp') {
+        user.provider = 'otp';
+      }
+      await user.save();
+    }
+
     // Generate JWT token
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
@@ -69,7 +92,10 @@ export async function verifyOtp(req, res) {
 
     const token = jwt.sign(
       {
-        phone,
+        id: String(user._id),
+        phone: user.phone,
+        email: user.email,
+        isAdmin: !!user.isAdmin,
         type: 'otp_login',
       },
       jwtSecret,
@@ -78,11 +104,12 @@ export async function verifyOtp(req, res) {
       }
     );
 
-    // Set HttpOnly cookie
-    res.cookie('token', token, {
+    // Set HttpOnly cookie (using 'jwt' to match Google OAuth)
+    const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL || '').startsWith('https://');
+    res.cookie('jwt', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -90,6 +117,13 @@ export async function verifyOtp(req, res) {
       success: true,
       message: 'Login successful',
       token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        isAdmin: !!user.isAdmin,
+      },
     });
   } catch (error) {
     console.error('Verify OTP Error:', error);

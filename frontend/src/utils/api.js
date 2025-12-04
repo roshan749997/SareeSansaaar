@@ -38,11 +38,12 @@ async function request(path, options = {}) {
   }
 
   // Build final fetch options
+  // Respect explicit credentials from options, otherwise use cookie session logic
   const fetchOpts = {
     ...options,
     headers,
-    // include credentials only when you're using cookie-based sessions
-    credentials: isCookieSession ? 'include' : 'same-origin',
+    // Use explicit credentials if provided, otherwise use cookie session logic
+    credentials: options.credentials ?? (isCookieSession ? 'include' : 'same-origin'),
   };
 
   // Avoid sending body on GET/HEAD
@@ -70,33 +71,46 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  signin: (payload) => request('/auth/signin', { method: 'POST', body: JSON.stringify(payload) }),
-  signup: (payload) => request('/auth/signup', { method: 'POST', body: JSON.stringify(payload) }),
-  forgotPassword: (payload) => request('/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) }),
+  signin: (payload) => request('/api/auth/signin', { method: 'POST', body: JSON.stringify(payload) }),
+  signup: (payload) => request('/api/auth/signup', { method: 'POST', body: JSON.stringify(payload) }),
+  forgotPassword: (payload) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) }),
+
+  // OTP Login endpoints
+  sendOtp: (mobile) => request('/api/auth/send-otp', { 
+    method: 'POST', 
+    body: JSON.stringify({ mobile }),
+    credentials: 'include',
+  }),
+  verifyOtp: ({ mobile, otp }) => request('/api/auth/verify-otp', { 
+    method: 'POST', 
+    body: JSON.stringify({ mobile, otp }),
+    credentials: 'include',
+  }),
 
   me: async () => {
     try {
-      return await request('/me', { method: 'GET' });
+      // Use credentials: 'include' to send cookies for Google OAuth
+      return await request('/api/me', { method: 'GET', credentials: 'include' });
     } catch (e) {
       // Fallback for older APIs
-      return await request('/auth/me', { method: 'GET' });
+      return await request('/api/auth/me', { method: 'GET', credentials: 'include' });
     }
   },
 
   // Cart endpoints
-  getCart: () => request('/cart', { method: 'GET' }),
-  addToCart: ({ productId, quantity = 1 }) => request('/cart/add', { method: 'POST', body: JSON.stringify({ productId, quantity }) }),
-  removeFromCart: (productId) => request(`/cart/remove/${productId}`, { method: 'DELETE' }),
+  getCart: () => request('/api/cart', { method: 'GET' }),
+  addToCart: ({ productId, quantity = 1 }) => request('/api/cart/add', { method: 'POST', body: JSON.stringify({ productId, quantity }) }),
+  removeFromCart: (productId) => request(`/api/cart/remove/${productId}`, { method: 'DELETE' }),
 
   // Admin endpoints
   admin: {
-    stats: () => request('/admin/stats', { method: 'GET' }),
-    createProduct: (payload) => request('/admin/products', { method: 'POST', body: JSON.stringify(payload) }),
-    updateProduct: (id, payload) => request(`/admin/products/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
-    listProducts: () => request('/admin/products', { method: 'GET' }),
-    deleteProduct: (id) => request(`/admin/products/${id}`, { method: 'DELETE' }),
-    listOrders: () => request('/admin/orders', { method: 'GET' }),
-    listAddresses: () => request('/admin/addresses', { method: 'GET' }),
+    stats: () => request('/api/admin/stats', { method: 'GET' }),
+    createProduct: (payload) => request('/api/admin/products', { method: 'POST', body: JSON.stringify(payload) }),
+    updateProduct: (id, payload) => request(`/api/admin/products/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
+    listProducts: () => request('/api/admin/products', { method: 'GET' }),
+    deleteProduct: (id) => request(`/api/admin/products/${id}`, { method: 'DELETE' }),
+    listOrders: () => request('/api/admin/orders', { method: 'GET' }),
+    listAddresses: () => request('/api/admin/addresses', { method: 'GET' }),
 
     // more robust updateOrderStatus that tries multiple routes
     updateOrderStatus: async (id, status) => {
@@ -110,11 +124,11 @@ export const api = {
       const payloadVariants = [{ status }, { orderStatus: status }];
       const opts = (method, body) => ({ method, headers, body: JSON.stringify(body), credentials: isCookieSession ? 'include' : 'same-origin' });
       const tryRoutes = [
-        { path: `/admin/orders/${id}/status`, methods: ['PUT', 'POST', 'PATCH'] },
-        { path: `/admin/orders/${id}`, methods: ['PATCH', 'PUT'] },
-        { path: `/orders/${id}/status`, methods: ['PUT', 'POST', 'PATCH'] },
-        { path: `/orders/${id}`, methods: ['PATCH', 'PUT'] },
-        { path: `/admin/order-status/${id}`, methods: ['PUT', 'POST'] },
+        { path: `/api/admin/orders/${id}/status`, methods: ['PUT', 'POST', 'PATCH'] },
+        { path: `/api/admin/orders/${id}`, methods: ['PATCH', 'PUT'] },
+        { path: `/api/orders/${id}/status`, methods: ['PUT', 'POST', 'PATCH'] },
+        { path: `/api/orders/${id}`, methods: ['PATCH', 'PUT'] },
+        { path: `/api/admin/order-status/${id}`, methods: ['PUT', 'POST'] },
       ];
       let lastErr;
       for (const route of tryRoutes) {

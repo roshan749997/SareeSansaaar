@@ -3,7 +3,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 
 const SignIn = () => {
+  const [loginMode, setLoginMode] = useState('email'); // 'email' or 'mobile'
   const [step, setStep] = useState(1); // 1: Mobile input, 2: OTP input
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
   const [mobile, setMobile] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,6 +26,10 @@ const SignIn = () => {
     }
   }, [resendTimer]);
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleMobileChange = (e) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 10);
     setMobile(value);
@@ -29,6 +38,50 @@ const SignIn = () => {
   const handleOtpChange = (e) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 6);
     setOtp(value);
+  };
+
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      const resp = await api.signin({ email: formData.email, password: formData.password });
+      // Store token then redirect to intended page or home
+      if (resp?.token) localStorage.setItem('auth_token', resp.token);
+      if (resp?.user?.isAdmin) {
+        localStorage.setItem('auth_is_admin', 'true');
+      } else {
+        try { localStorage.removeItem('auth_is_admin'); } catch { }
+      }
+      const redirectTo = location.state?.from?.pathname || '/';
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      setError(err.message || 'Failed to sign in');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMobileLoginClick = () => {
+    setLoginMode('mobile');
+    setStep(1);
+    setError('');
+    setSuccess('');
+    setMobile('');
+    setOtp('');
+    setResendTimer(0);
+  };
+
+  const handleBackToEmail = () => {
+    setLoginMode('email');
+    setStep(1);
+    setError('');
+    setSuccess('');
+    setMobile('');
+    setOtp('');
+    setResendTimer(0);
   };
 
   const handleSendOtp = async (e) => {
@@ -43,25 +96,9 @@ const SignIn = () => {
 
     setLoading(true);
     try {
-      // Normalize API base URL (remove trailing slash if present)
-      const baseUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/+$/, '');
-      const response = await fetch(`${baseUrl}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile }),
-        credentials: 'include',
-      });
+      const data = await api.sendOtp(mobile);
       
-      let data;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        const text = await response.text();
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
-      }
-      
-      if (!response.ok || !data.success) {
+      if (!data.success) {
         throw new Error(data?.message || 'Failed to send OTP');
       }
       
@@ -87,25 +124,9 @@ const SignIn = () => {
 
     setLoading(true);
     try {
-      // Normalize API base URL (remove trailing slash if present)
-      const baseUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/+$/, '');
-      const response = await fetch(`${baseUrl}/api/auth/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile, otp }),
-        credentials: 'include',
-      });
+      const data = await api.verifyOtp({ mobile, otp });
       
-      let data;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        const text = await response.text();
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
-      }
-      
-      if (!response.ok || !data.success) {
+      if (!data.success) {
         throw new Error(data?.message || 'Invalid OTP');
       }
       
@@ -131,25 +152,9 @@ const SignIn = () => {
     setError('');
     setLoading(true);
     try {
-      // Normalize API base URL (remove trailing slash if present)
-      const baseUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/+$/, '');
-      const response = await fetch(`${baseUrl}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile }),
-        credentials: 'include',
-      });
+      const data = await api.sendOtp(mobile);
       
-      let data;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        const text = await response.text();
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
-      }
-      
-      if (!response.ok || !data.success) {
+      if (!data.success) {
         throw new Error(data?.message || 'Failed to resend OTP');
       }
       
@@ -215,8 +220,80 @@ const SignIn = () => {
               {error && (<div className="mb-4 text-sm text-red-600">{error}</div>)}
               {success && (<div className="mb-4 text-sm text-green-600">{success}</div>)}
               
-              {step === 1 ? (
+              {loginMode === 'email' ? (
+                <form onSubmit={handleEmailLogin} className="space-y-4">
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all"
+                      placeholder="Enter your email"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all"
+                      placeholder="Enter your password"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 text-rose-500 focus:ring-rose-400 border-neutral-300 rounded"
+                      />
+                      <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <Link
+                      to="/forgot-password"
+                      className="text-sm text-rose-500 hover:text-rose-600 transition-colors"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-rose-500 to-rose-600 text-white py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60"
+                  >
+                    {loading ? 'Signing In...' : 'Sign In'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(location.state?.from?.pathname || '/')}
+                    className="w-full mt-2 border border-neutral-200 text-neutral-700 py-2 rounded-lg font-semibold hover:bg-neutral-50 transition-all duration-300"
+                  >
+                    Continue as Guest
+                  </button>
+                </form>
+              ) : step === 1 ? (
                 <form onSubmit={handleSendOtp} className="space-y-4">
+                  <button
+                    type="button"
+                    onClick={handleBackToEmail}
+                    className="text-sm text-gray-600 hover:text-gray-800 transition-colors mb-2"
+                  >
+                    ← Back to email login
+                  </button>
                   <div>
                     <label htmlFor="mobile" className="block text-sm font-medium text-neutral-700 mb-2">
                       Mobile Number
@@ -251,6 +328,13 @@ const SignIn = () => {
                 </form>
               ) : (
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
+                  <button
+                    type="button"
+                    onClick={handleBackToEmail}
+                    className="text-sm text-gray-600 hover:text-gray-800 transition-colors mb-2"
+                  >
+                    ← Back to email login
+                  </button>
                   <div>
                     <label htmlFor="otp" className="block text-sm font-medium text-neutral-700 mb-2">
                       Enter OTP
@@ -328,11 +412,13 @@ const SignIn = () => {
               </div>
 
               {/* Social Login */}
-              <div className="flex justify-center">
+              <div className="space-y-2">
                 <button
                   type="button"
                   onClick={() => {
-                    const SERVER_BASE = import.meta.env.VITE_BACKEND_BASE || 'http://localhost:5000';
+                    let SERVER_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+                    // Remove trailing slash if present
+                    SERVER_BASE = SERVER_BASE.replace(/\/+$/, '');
                     window.location.href = `${SERVER_BASE}/api/auth/google`;
                   }}
                   className="flex items-center justify-center w-full px-4 py-2 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
@@ -345,6 +431,18 @@ const SignIn = () => {
                   </svg>
                   Sign in with Google
                 </button>
+                {loginMode === 'email' && (
+                  <button
+                    type="button"
+                    onClick={handleMobileLoginClick}
+                    className="flex items-center justify-center w-full px-4 py-2 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    Login with Mobile Number
+                  </button>
+                )}
               </div>
 
               {/* Sign Up Link */}

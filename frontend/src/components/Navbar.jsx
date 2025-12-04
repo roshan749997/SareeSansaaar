@@ -63,13 +63,26 @@ const Navbar = () => {
     };
 
     checkAuth();
+    
+    // Listen for storage events (from other tabs/windows)
     const onStorage = (e) => {
       if (!e || e.key === 'auth_token') {
         checkAuth();
       }
     };
+    
+    // Listen for custom auth state change events (from same window)
+    const onAuthStateChanged = () => {
+      checkAuth();
+    };
+    
     window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    window.addEventListener('authStateChanged', onAuthStateChanged);
+    
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('authStateChanged', onAuthStateChanged);
+    };
   }, []);
 
   const handleLogout = () => {

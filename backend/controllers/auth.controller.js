@@ -4,7 +4,8 @@ import User from '../models/User.js';
 
 function generateJwt(userId) {
   const jwtSecret = process.env.JWT_SECRET || 'dev_secret_change_me';
-  return jwt.sign({ userId }, jwtSecret, { expiresIn: '7d' });
+  // Use 'id' for consistency with Google and OTP login
+  return jwt.sign({ id: String(userId) }, jwtSecret, { expiresIn: '7d' });
 }
 
 export async function signup(req, res) {
@@ -89,5 +90,3 @@ export async function resetPassword(req, res) {
 }
 
 export default { signup, signin, forgotPassword, resetPassword };
-
-

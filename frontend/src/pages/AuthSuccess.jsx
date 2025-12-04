@@ -9,15 +9,33 @@ export default function AuthSuccess() {
   useEffect(() => {
     const run = async () => {
       try {
+        // Call api.me() with credentials to get user data from cookie
         const data = await api.me();
         const user = data?.user || null;
-        try { localStorage.setItem('auth_token', 'cookie'); } catch {}
+        
+        // Set auth token marker for cookie-based auth
+        try { 
+          localStorage.setItem('auth_token', 'cookie'); 
+          // Dispatch storage event to notify Navbar and other components
+          window.dispatchEvent(new Event('storage'));
+          // Also trigger a custom event for immediate update
+          window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true } }));
+        } catch {}
+        
         if (user?.isAdmin) {
           try { localStorage.setItem('auth_is_admin', 'true'); } catch {}
         } else {
           try { localStorage.removeItem('auth_is_admin'); } catch {}
         }
-      } catch {}
+      } catch (err) {
+        console.error('Auth success error:', err);
+        // Even if api.me() fails, set the cookie marker since cookie is set by backend
+        try { 
+          localStorage.setItem('auth_token', 'cookie');
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true } }));
+        } catch {}
+      }
       const redirectTo = '/';
       navigate(redirectTo, { replace: true, state: location.state });
     };
