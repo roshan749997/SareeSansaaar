@@ -55,6 +55,7 @@ export async function sendOtp(req, res) {
     });
 
     // Send OTP via Fast2SMS
+    // API URL must be EXACT with no trailing slash
     const fast2smsUrl = 'https://www.fast2sms.com/dev/bulkV2';
     const apiKey = process.env.FAST2SMS_API_KEY;
 
@@ -67,19 +68,20 @@ export async function sendOtp(req, res) {
     }
 
     try {
+      // Create URLSearchParams for form-urlencoded format
+      // Using Quick Route (route = "q") - NO DLT
+      const params = new URLSearchParams();
+      params.append('route', 'q');
+      params.append('message', `Your SaariSanskar OTP is ${otp}`);
+      params.append('numbers', phone);
+
       const smsResponse = await axios.post(
         fast2smsUrl,
-        {
-          route: 'v3',
-          sender_id: 'TXTIND',
-          message: `Your TurbooToys login OTP is ${otp}. Do not share this OTP with anyone.`,
-          language: 'english',
-          numbers: phone,
-        },
+        params.toString(), // Send as URL-encoded string
         {
           headers: {
             authorization: apiKey,
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
         }
       );
@@ -96,14 +98,31 @@ export async function sendOtp(req, res) {
         throw new Error(smsResponse.data.message || 'Failed to send OTP');
       }
     } catch (smsError) {
-      console.error('Fast2SMS API Error:', smsError.response?.data || smsError.message);
+      // Properly log Fast2SMS errors from response.data
+      if (smsError.response) {
+        console.error('Fast2SMS API Error Response:', {
+          status: smsError.response.status,
+          statusText: smsError.response.statusText,
+          data: smsError.response.data,
+        });
+      } else if (smsError.request) {
+        console.error('Fast2SMS API Error - No response received:', smsError.message);
+      } else {
+        console.error('Fast2SMS API Error:', smsError.message);
+      }
       
       // Remove OTP from store if SMS failed
       otpStore.delete(phone);
       
+      // Extract error message from Fast2SMS response.data
+      const errorMessage = smsError.response?.data?.message || 
+                           smsError.response?.data?.msg || 
+                           smsError.message || 
+                           'Failed to send OTP. Please try again.';
+      
       return res.status(500).json({
         success: false,
-        message: smsError.response?.data?.message || 'Failed to send OTP. Please try again.',
+        message: errorMessage,
       });
     }
   } catch (error) {

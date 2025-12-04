@@ -43,8 +43,9 @@ const SignIn = () => {
 
     setLoading(true);
     try {
-      const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
+      // Normalize API base URL (remove trailing slash if present)
+      const baseUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const response = await fetch(`${baseUrl}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobile }),
@@ -86,8 +87,9 @@ const SignIn = () => {
 
     setLoading(true);
     try {
-      const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
+      // Normalize API base URL (remove trailing slash if present)
+      const baseUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const response = await fetch(`${baseUrl}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobile, otp }),
@@ -129,8 +131,9 @@ const SignIn = () => {
     setError('');
     setLoading(true);
     try {
-      const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
+      // Normalize API base URL (remove trailing slash if present)
+      const baseUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const response = await fetch(`${baseUrl}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobile }),
@@ -252,6 +255,11 @@ const SignIn = () => {
                     <label htmlFor="otp" className="block text-sm font-medium text-neutral-700 mb-2">
                       Enter OTP
                     </label>
+                    <div className="mb-2 text-center">
+                      <p className="text-sm text-gray-600">
+                        OTP sent to <span className="font-semibold text-neutral-800 text-base">{mobile}</span>
+                      </p>
+                    </div>
                     <input
                       type="text"
                       id="otp"
