@@ -110,3 +110,66 @@ export const verifyPayment = async (req, res) => {
     return res.status(500).json({ error: 'Verification failed' });
   }
 };
+
+export const createCodOrder = async (req, res) => {
+  console.log('[createCodOrder] Request received');
+  try {
+    const userId = req.userId;
+    console.log('[createCodOrder] UserId:', userId);
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+    if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) {
+      return res.status(400).json({ error: 'Cart is empty' });
+    }
+
+    const items = cart.items.map(i => {
+      const p = i.product;
+      let base = 0;
+      if (p && typeof p.price === 'number') {
+        base = Number(p.price) || 0;
+      } else {
+        const mrp = Number(p?.mrp) || 0;
+        const discountPercent = Number(p?.discountPercent) || 0;
+        base = Math.round(mrp - (mrp * discountPercent) / 100) || 0;
+      }
+      return { product: p._id, quantity: i.quantity, price: base };
+    });
+    const amount = items.reduce((sum, it) => sum + (it.price * it.quantity), 0);
+
+    // Load user's current address to snapshot into the order
+    let shippingAddress = null;
+    try {
+      const addr = await Address.findOne({ userId });
+      if (addr) {
+        const { fullName, mobileNumber, pincode, locality, address, city, state, landmark, alternatePhone, addressType } = addr;
+        shippingAddress = { fullName, mobileNumber, pincode, locality, address, city, state, landmark, alternatePhone, addressType };
+      }
+    } catch (err) {
+      console.error('Error loading address for COD order:', err);
+    }
+
+    if (!shippingAddress) {
+      return res.status(400).json({ error: 'Shipping address is required for COD orders' });
+    }
+
+    const order = await Order.create({
+      user: userId,
+      items,
+      amount,
+      currency: 'INR',
+      status: 'pending',
+      paymentMethod: 'cod',
+      shippingAddress,
+    });
+
+    // Clear cart after order creation
+    cart.items = [];
+    await cart.save();
+
+    return res.json({ success: true, order });
+  } catch (err) {
+    console.error('COD order creation error:', err?.message || err);
+    return res.status(500).json({ error: 'Failed to create COD order' });
+  }
+};

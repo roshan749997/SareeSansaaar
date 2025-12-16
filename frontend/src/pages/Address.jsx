@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { getMyAddress, saveMyAddress, deleteAddressById, createPaymentOrder, verifyPayment } from '../services/api';
+import { getMyAddress, saveMyAddress, deleteAddressById, createPaymentOrder, verifyPayment, createCodOrder } from '../services/api';
 
 const indianStates = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -65,6 +65,8 @@ export default function AddressForm() {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showForm, setShowForm] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState('razorpay'); // 'razorpay' or 'cod'
+  const [processingOrder, setProcessingOrder] = useState(false);
   const { cart, cartTotal: total, loadCart } = useCart();
 
   // Calculate price details
@@ -95,6 +97,29 @@ export default function AddressForm() {
       alert('Please save your delivery address first.');
       return;
     }
+
+    // Handle Cash on Delivery
+    if (paymentMethod === 'cod') {
+      try {
+        setProcessingOrder(true);
+        const result = await createCodOrder();
+        if (result && result.success) {
+          await loadCart();
+          alert('Order placed successfully! You will pay cash on delivery.');
+          navigate('/profile?tab=orders');
+        } else {
+          alert('Failed to place order. Please try again.');
+        }
+      } catch (error) {
+        console.error('COD order error:', error);
+        alert(error.message || 'Failed to place COD order. Please try again.');
+      } finally {
+        setProcessingOrder(false);
+      }
+      return;
+    }
+
+    // Handle Razorpay payment
     try {
       if (!window.Razorpay) {
         await new Promise((resolve, reject) => {
@@ -690,12 +715,58 @@ export default function AddressForm() {
               <span>₹{priceDetails.total.toLocaleString()}</span>
             </div>
 
+            {/* Payment Method Selection */}
+            {hasSavedAddress && (
+              <div className="mb-4 pb-4 border-b">
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Select Payment Method</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="razorpay"
+                      checked={paymentMethod === 'razorpay'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-4 h-4 text-[#800020] focus:ring-[#800020]"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-gray-900">Online Payment</span>
+                      <p className="text-xs text-gray-500">Pay securely with Razorpay</p>
+                    </div>
+                  </label>
+                  <label className="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cod"
+                      checked={paymentMethod === 'cod'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-4 h-4 text-[#800020] focus:ring-[#800020]"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-gray-900">Cash on Delivery</span>
+                      <p className="text-xs text-gray-500">Pay when you receive the order</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            )}
+
             <button 
               onClick={handlePayment}
-              disabled={!hasSavedAddress}
-              className={`w-full mt-4 py-3 px-4 rounded-md transition-colors font-medium cursor-pointer ${hasSavedAddress ? 'bg-[#800020] text-white hover:bg-[#660019]' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
+              disabled={!hasSavedAddress || processingOrder}
+              className={`w-full mt-4 py-3 px-4 rounded-md transition-colors font-medium cursor-pointer ${
+                hasSavedAddress && !processingOrder
+                  ? 'bg-[#800020] text-white hover:bg-[#660019]' 
+                  : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+              }`}
             >
-              PROCEED TO PAYMENT
+              {processingOrder 
+                ? 'PLACING ORDER...' 
+                : paymentMethod === 'cod' 
+                  ? 'PLACE ORDER (COD)' 
+                  : 'PROCEED TO PAYMENT'
+              }
             </button>
           </div>
         </div>

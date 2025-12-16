@@ -34,7 +34,7 @@ export default function AuthSuccess() {
           localStorage.setItem('auth_token', 'cookie');
           window.dispatchEvent(new Event('storage'));
           window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true } }));
-        } catch {}
+      } catch {}
       }
       const redirectTo = '/';
       navigate(redirectTo, { replace: true, state: location.state });

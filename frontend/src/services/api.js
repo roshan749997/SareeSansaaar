@@ -6,9 +6,9 @@ const getBackendUrl = () => {
   return import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 };
 
-// const API_URL = `${getBackendUrl()}/api`;
+const API_URL = `${getBackendUrl()}/api`;
 
-const API_URL = 'https://api.saarisanskar.in/api';
+// const API_URL = 'https://api.saarisanskar.in/api';
 
 // ---------------------------------------------------------
 // PRODUCTS
@@ -157,6 +157,29 @@ export const verifyPayment = async (payload) => {
   });
   if (!res.ok) throw new Error("Failed to verify payment");
   return res.json();
+};
+
+export const createCodOrder = async () => {
+  const url = `${API_URL}/payment/cod`;
+  console.log('[createCodOrder] Calling:', url);
+  
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    credentials: "include",
+  });
+  
+  console.log('[createCodOrder] Response status:', res.status, res.statusText);
+  
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    console.error('[createCodOrder] Error response:', errorData);
+    throw new Error(errorData.error || `Failed to create COD order (${res.status})`);
+  }
+  
+  const data = await res.json();
+  console.log('[createCodOrder] Success:', data);
+  return data;
 };
 
 
