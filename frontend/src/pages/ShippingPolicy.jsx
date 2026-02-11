@@ -73,17 +73,9 @@ const ShippingPolicy = () => {
             </h2>
             <p className="leading-relaxed mb-2">
               Shipping charges (if applicable) will be clearly displayed at
-              checkout before you confirm your order. Our standard structure is:
+              checkout before you confirm your order.
             </p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>
-                <strong>Standard Shipping:</strong> ₹[X] for orders below ₹[Amount].
-              </li>
-              <li>
-                <strong>Free Shipping:</strong> for orders above ₹[Amount] (if
-                offered).
-              </li>
-            </ul>
+           
             <p className="text-sm text-gray-700 mt-2">
               Replace the placeholder amounts above with your actual shipping
               fee rules.
