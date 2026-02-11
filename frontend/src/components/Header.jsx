@@ -64,17 +64,17 @@ const Header = () => {
         { name: 'BANARASI DRESS MATERIAL', path: '/category/banarasi/banarasi-dress-material' }
       ]
     },
-    { 
-      name: 'DESIGNER SAREES', 
-      path: '/category/designer-sarees',
-      subcategories: [
-        { name: 'PARTY WEAR SAREE', path: '/category/designer-sarees/party-wear-saree' },
-        { name: 'WEDDING SAREES', path: '/category/designer-sarees/wedding-sarees' },
-        { name: 'FESTIVE SAREES', path: '/category/designer-sarees/festive-sarees' },
-        { name: 'BOLLYWOOD STYLE SAREES', path: '/category/designer-sarees/bollywood-style-sarees' },
-        { name: 'HEAVY EMBROIDERED SAREES', path: '/category/designer-sarees/heavy-embroidered-sarees' }
-      ]
-    },
+    // { 
+    //   name: 'DESIGNER SAREES', 
+    //   path: '/category/designer-sarees',
+    //   subcategories: [
+    //     { name: 'PARTY WEAR SAREE', path: '/category/designer-sarees/party-wear-saree' },
+    //     { name: 'WEDDING SAREES', path: '/category/designer-sarees/wedding-sarees' },
+    //     { name: 'FESTIVE SAREES', path: '/category/designer-sarees/festive-sarees' },
+    //     { name: 'BOLLYWOOD STYLE SAREES', path: '/category/designer-sarees/bollywood-style-sarees' },
+    //     { name: 'HEAVY EMBROIDERED SAREES', path: '/category/designer-sarees/heavy-embroidered-sarees' }
+    //   ]
+    // },
     { 
       name: 'PRINTED SAREES', 
       path: '/category/printed-sarees',

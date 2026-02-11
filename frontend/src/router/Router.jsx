@@ -32,6 +32,7 @@ import PrivacyPolicy from '../pages/PrivacyPolicy';
 import TermsAndConditions from '../pages/TermsAndConditions';
 import ShippingPolicy from '../pages/ShippingPolicy';
 import RefundCancellationPolicy from '../pages/RefundCancellationPolicy';
+import ReturnsPolicy from '../pages/ReturnsPolicy';
 
 const isAuthenticated = () => {
   try {
@@ -111,7 +112,9 @@ const Router = () => {
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="terms" element={<TermsAndConditions />} />
           <Route path="shipping" element={<ShippingPolicy />} />
-          <Route path="returns" element={<RefundCancellationPolicy />} />
+          <Route path="refund-cancellation" element={<RefundCancellationPolicy />} />
+          <Route path="returns" element={<ReturnsPolicy />} />
+
 
           {/* Private route(s) */}
           <Route path="cart" element={<RequireAuth><Cart /></RequireAuth>} />

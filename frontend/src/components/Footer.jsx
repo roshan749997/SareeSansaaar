@@ -18,14 +18,14 @@ const Footer = () => {
     { name: 'BANARASI SAREES', path: '/category/banarasi' },
   ];
 
-  const customerService = [
-    { name: 'SHIPPING POLICY', path: '/shipping' },
-    { name: 'RETURNS & EXCHANGE', path: '/returns' },
-    { name: 'SIZE GUIDE', path: '/size-guide' },
-    { name: 'CARE INSTRUCTIONS', path: '/care-instructions' },
-    { name: 'FAQ', path: '/faq' },
-    { name: 'TRACK YOUR ORDER', path: '/track-order' },
-  ];
+  // const customerService = [
+  //   { name: 'SHIPPING POLICY', path: '/shipping' },
+  //   { name: 'RETURNS & EXCHANGE', path: '/returns' },
+  //   { name: 'SIZE GUIDE', path: '/size-guide' },
+  //   { name: 'CARE INSTRUCTIONS', path: '/care-instructions' },
+  //   { name: 'FAQ', path: '/faq' },
+  //   { name: 'TRACK YOUR ORDER', path: '/track-order' },
+  // ];
 
 
   const socialLinks = [
@@ -78,7 +78,7 @@ const Footer = () => {
     <footer className="bg-[#273142] text-white border-t border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Brand Section */}
           <div className="lg:col-span-2">
             {/* Logo/Brand */}
@@ -154,7 +154,7 @@ const Footer = () => {
           </div>
 
           {/* Customer Service */}
-          <div>
+          {/* <div>
             <h3 className="text-lg font-semibold text-white mb-4 relative inline-block">
               Customer Service
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></span>
@@ -172,13 +172,13 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </div>
 
 
 
         {/* Copyright */}
-        <div className="border-t border-gray-700 pt-6 text-center">
+        <div className="border-t border-gray-700 pt-6 text-center ">
           <p className="text-gray-300 text-sm mb-2">
             © {currentYear} <span className="font-semibold text-white">SareeSansaar</span>. All rights reserved.
           </p>
@@ -198,8 +198,12 @@ const Footer = () => {
               Shipping Policy
             </Link>
             <span className="text-gray-600">•</span>
-            <Link to="/returns" onClick={scrollToTop} className="hover:text-white transition-colors duration-200">
+            <Link to="/refund-cancellation" onClick={scrollToTop} className="hover:text-white transition-colors duration-200">
             Refund/Cancellation Policy
+            </Link>
+            <span className="text-gray-600">•</span>
+            <Link to="/returns" onClick={scrollToTop} className="hover:text-white transition-colors duration-200">
+            Returns Policy
             </Link>
           </div>
         </div>

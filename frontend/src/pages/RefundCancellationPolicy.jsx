@@ -54,71 +54,12 @@ const RefundCancellationPolicy = () => {
           </section>
 
           {/* 2. Return Policy */}
-          <section>
-            <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              2. Return Policy
-            </h2>
-            <p className="leading-relaxed mb-2">
-              We accept returns under the following conditions:
-            </p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>
-                <strong>Return Window:</strong> Returns must be initiated within{" "}
-                <strong>[X] days</strong> of delivery.
-              </li>
-              <li>
-                <strong>Product Condition:</strong> Products must be unused,
-                unwashed, with original tags and packaging intact.
-              </li>
-              <li>
-                <strong>Reason for Return:</strong> Defective items, wrong
-                product received, or size mismatch (subject to availability).
-              </li>
-              <li>
-                <strong>Non-Returnable Items:</strong> Customised or personalised
-                products, items damaged by customer, or items without original
-                packaging may not be eligible for return.
-              </li>
-            </ul>
-          </section>
-
-          {/* 3. Return Process */}
-          <section>
-            <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              3. How to Initiate a Return
-            </h2>
-            <p className="leading-relaxed mb-2">
-              To initiate a return, please follow these steps:
-            </p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>
-                Contact us via email at{" "}
-                <span className="text-blue-600">
-                  shivrudrayinternational03@gmail.com
-                </span>{" "}
-                or call us at{" "}
-                <span className="text-blue-600">+91 92744 90602</span> with your
-                order ID.
-              </li>
-              <li>
-                Provide clear photos/videos of the product if it's defective or
-                damaged.
-              </li>
-              <li>
-                Once approved, we will provide you with a return address and
-                instructions.
-              </li>
-              <li>
-                Pack the product securely in its original packaging and ship it
-                back to us.
-              </li>
-            </ul>
-          </section>
+         
 
           {/* 4. Refund Process */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              4. Refund Process
+              2. Refund Process
             </h2>
             <p className="leading-relaxed mb-2">
               Once we receive and inspect the returned product:
@@ -126,7 +67,7 @@ const RefundCancellationPolicy = () => {
             <ul className="list-disc list-inside space-y-1">
               <li>
                 We will process your refund within{" "}
-                <strong>[X] business days</strong> of receiving the returned
+                <strong>7 business days</strong> of receiving the returned
                 item.
               </li>
               <li>
@@ -147,7 +88,7 @@ const RefundCancellationPolicy = () => {
           {/* 5. Exchange Policy */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              5. Exchange Policy
+              3. Exchange Policy
             </h2>
             <p className="leading-relaxed mb-2">
               We offer exchanges for size or colour mismatches, subject to:
@@ -172,7 +113,7 @@ const RefundCancellationPolicy = () => {
           {/* 6. Defective or Damaged Products */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              6. Defective or Damaged Products
+              4. Defective or Damaged Products
             </h2>
             <p className="leading-relaxed mb-2">
               If you receive a defective or damaged product:
@@ -196,7 +137,7 @@ const RefundCancellationPolicy = () => {
           {/* 7. Wrong Product Received */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              7. Wrong Product Received
+              5. Wrong Product Received
             </h2>
             <p className="leading-relaxed mb-2">
               If you receive a product different from what you ordered:
@@ -217,7 +158,7 @@ const RefundCancellationPolicy = () => {
           {/* 8. Refund Timeline */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              8. Refund Timeline
+              6. Refund Timeline
             </h2>
             <p className="leading-relaxed mb-2">
               Refund processing times vary by payment method:
@@ -249,7 +190,7 @@ const RefundCancellationPolicy = () => {
           {/* 9. Non-Refundable Items */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              9. Non-Refundable Items & Situations
+              7. Non-Refundable Items & Situations
             </h2>
             <p className="leading-relaxed mb-2">
               The following items or situations are not eligible for refund:
@@ -266,7 +207,7 @@ const RefundCancellationPolicy = () => {
           {/* 10. Store Credit */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              10. Store Credit
+              8. Store Credit
             </h2>
             <p className="leading-relaxed mb-2">
               In certain cases, we may offer store credit instead of a refund:
@@ -277,7 +218,7 @@ const RefundCancellationPolicy = () => {
               </li>
               <li>
                 Store credit is valid for{" "}
-                <strong>[X months]</strong> from the date of issue.
+                <strong>3 months</strong> from the date of issue.
               </li>
               <li>
                 Store credit cannot be transferred to another account or
@@ -289,7 +230,7 @@ const RefundCancellationPolicy = () => {
           {/* 11. Changes to Policy */}
           <section>
             <h2 className="text-xl lg:text-2xl font-semibold mb-3">
-              11. Changes to This Policy
+              9. Changes to This Policy
             </h2>
             <p className="leading-relaxed">
               We may revise this Refund & Cancellation Policy from time to time.

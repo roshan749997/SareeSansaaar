@@ -10,7 +10,7 @@ const Home = () => {
       <HeroSlider
         slides={[
           {
-            desktop: 'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1765977625/Red_White_Simple_Christmas_Sale_Banner_Landscape_2048_x_594_px_yg4t0j.png',
+            desktop: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1770796882/Red_and_Yellow_Traditional_Onam_Sale_Medium_Banner_US_Landscape_1920_x_600_px_1_wnzt9f.png",
             alt: 'SareeSansaar - Premium Saree Collection',
           },
           {
@@ -18,7 +18,7 @@ const Home = () => {
             alt: 'Festive Offer - SareeSansaar',
           },
         ]}
-        mobileSrc="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1765978774/Red_Minimal_Typographic_Christmas_Sale_Instagram_Post_1080_x_1080_px_k6kvz9.png"
+        mobileSrc="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1770797099/Red_and_Yellow_Traditional_Onam_Sale_Medium_Banner_US_Landscape_1080_x_1080_px_kovnx0.png"
       />
 
       {/* Featured Collections */}

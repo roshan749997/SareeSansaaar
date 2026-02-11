@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Collections = () => {
   const collections = [
-    { title: 'Festive Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997162/unnamed_m26syz.jpg' },
+    // { title: 'Festive Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997162/unnamed_m26syz.jpg' },
     { title: 'Banarasi Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761996662/unnamed_nweur7.jpg' },
     { title: 'Kalamkari Cotton Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761994621/Gemini_Generated_Image_ypuu4gypuu4gypuu_jgplbq.png' },
     { title: 'Kanjivaram Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761990540/kanjivaram_sarees_pva3cp.png' },
@@ -36,9 +36,9 @@ const Collections = () => {
     { title: 'Banarasi Regional Dupatta', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761996591/unnamed_raauh8.jpg' },
     { title: 'Banarasi Dupatta', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761996738/unnamed_pbqdiz.jpg' },
     { title: 'Banarasi Dress Material', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761996926/unnamed_bx15sw.jpg' },
-    { title: 'Party Wear Saree', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761996980/unnamed_somess.jpg' },
-    { title: 'Bollywood Style Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997249/unnamed_y1gor8.jpg' },
-    { title: 'Heavy Embroidered Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997328/unnamed_lltvbe.jpg' },
+    // { title: 'Party Wear Saree', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761996980/unnamed_somess.jpg' },
+    // { title: 'Bollywood Style Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997249/unnamed_y1gor8.jpg' },
+    // { title: 'Heavy Embroidered Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997328/unnamed_lltvbe.jpg' },
     { title: 'Floral Printed Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997427/unnamed_taunb5.jpg' },
     { title: 'Digital Printed Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761997506/unnamed_s493zy.jpg' },
     { title: 'Block Printed Sarees', image: 'https://res.cloudinary.com/duc9svg7w/image/upload/v1761999851/unnamed_kpla93.jpg' },
@@ -90,11 +90,11 @@ const Collections = () => {
     'Banarasi Dress Material': '/category/banarasi/banarasi-dress-material',
 
     // Designer Sarees
-    'Party Wear Saree': '/category/designer-sarees/party-wear',
-    'Wedding Sarees': '/category/designer-sarees/wedding',
-    'Festive Sarees': '/category/designer-sarees/festive',
-    'Bollywood Style Sarees': '/category/designer-sarees/bollywood-style',
-    'Heavy Embroidered Sarees': '/category/designer-sarees/heavy-embroidered',
+    // 'Party Wear Saree': '/category/designer-sarees/party-wear',
+    // 'Wedding Sarees': '/category/designer-sarees/wedding',
+    // 'Festive Sarees': '/category/designer-sarees/festive',
+    // 'Bollywood Style Sarees': '/category/designer-sarees/bollywood-style',
+    // 'Heavy Embroidered Sarees': '/category/designer-sarees/heavy-embroidered',
 
     // Printed Sarees
     'Floral Printed Sarees': '/category/printed-sarees/floral',
