@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-logo: "Playfair Display", ui-serif, Georgia, serif;
+}
+
 /* Prevent horizontal scrolling */
 html, body {
   max-width: 100%;

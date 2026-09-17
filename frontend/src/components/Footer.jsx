@@ -82,12 +82,13 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             {/* Logo/Brand */}
-          <Link to="/" className="flex-shrink-0">
-            <img 
-              src="https://res.cloudinary.com/duc9svg7w/image/upload/v1764596289/1764596075057_nq2sed-removebg-preview_tm0y6m.png" 
-              alt="SareeSansaar Logo" 
-              className="h-21 md:h-60 w-auto hover:scale-105 transition-transform duration-300 mb-6"
-            />
+          <Link to="/" className="flex-shrink-0 inline-block mb-6 hover:opacity-90 transition-opacity duration-300">
+            <span
+              className="block text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide text-white"
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}
+            >
+              SareeSansaar
+            </span>
           </Link>
             
 
