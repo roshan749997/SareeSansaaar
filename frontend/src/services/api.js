@@ -1,14 +1,21 @@
 // ---------------------------------------------------------
 // CLEAN + CORRECT BACKEND URL HANDLING
 // ---------------------------------------------------------
+// VITE_BACKEND_URL should be the host only, e.g.:
+//   http://localhost:5000
+//   https://api.saarisanskar.in
+// (with or without trailing slash / trailing /api — both are normalized)
 
 const getBackendUrl = () => {
   return import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 };
 
-const API_URL = `${getBackendUrl().replace(/\/$/, "")}/api`;
+const normalizeApiUrl = (baseUrl) => {
+  const trimmed = String(baseUrl || "").trim().replace(/\/+$/, "");
+  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+};
 
-// const API_URL = 'https://api.saarisanskar.in/api';
+const API_URL = normalizeApiUrl(getBackendUrl());
 
 // ---------------------------------------------------------
 // PRODUCTS
@@ -41,6 +48,9 @@ export const fetchSarees = async (category) => {
     return data;
   } catch (error) {
     console.error("Error fetching sarees:", error);
+    if (error?.message?.startsWith("Failed to fetch sarees:")) {
+      throw error;
+    }
     throw new Error("Unable to connect to server. Check backend & VITE_BACKEND_URL.");
   }
 };
